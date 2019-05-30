@@ -1,4 +1,5 @@
 FROM ubuntu:18.04
+ARG RUST_TOOLCHAIN="1.33.0"
 
 # Adding rust binaries to PATH.
 ENV PATH="$PATH:/root/.cargo/bin"
@@ -9,7 +10,8 @@ RUN apt-get -y install gcc
 
 # Installing rustup.
 RUN apt-get -y install curl
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+# Install a fixed version of rust
+curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOLCHAIN"
 
 # Installing rust tools used by the rust-vmm CI.
 RUN rustup component add rustfmt
