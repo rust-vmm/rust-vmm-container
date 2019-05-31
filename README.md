@@ -1,18 +1,20 @@
-# rust-vmm-dev-container
+# rust-vmm-container
 
-**rust-vmm-dev** is a container with all dependencies used for running
+**rustvmm/dev** is a container with all dependencies used for running
 rust-vmm integration tests.
 
 The container is available on Docker Hub and has support for x86_64 and
 aarch64 platforms.
-Pull the latest version by running:
 
 ```bash
-docker pull fandree/rust-vmm-dev
+docker pull rust-vmm/dev:v1
 ```
 
+For the latest available tag, please check the `rustvmm/dev` builds available
+on [Docker Hub](https://hub.docker.com/r/rustvmm/dev/tags).
+
 Depending on which platform you're running the command from, docker will pull
-either `rust-vmm-dev:aarch64` or `rust-vmm-dev:x86_64`.
+either `rust-vmm/dev:v1_aarch64` or `rust-vmm/dev:v1_x86_64`.
 
 For now rust is installed only for the root user.
 
@@ -27,7 +29,7 @@ Example of running cargo build on the kvm-ioctls crate:
 > git clone git@github.com:rust-vmm/kvm-ioctls.git
 > cd kvm-ioctls/
 > docker run --volume $(pwd):/kvm-ioctls \
-         fandree/rust-vmm-dev \
+         rust-vmm/dev:v1 \
          /bin/bash -c "cd /kvm-ioctls && cargo build --release"
  Downloading crates ...
   Downloaded libc v0.2.48
@@ -71,33 +73,33 @@ On an aarch64 platform:
 > docker build -t rust-vmm-dev:aarch64 -f Dockerfile.aarch64 .
 > docker images
 REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
-fandree/rust-vmm-dev   aarch64             f3fd02dfb213        21 hours ago        1.13GB
-fandree/rust-vmm-dev   latest              f3fd02dfb213        21 hours ago        1.13GB
+rust-vmm/dev           aarch64             f3fd02dfb213        21 hours ago        1.13GB
 ubuntu                 18.04               0926e73e5245        3 weeks ago         80.4MB
 >
-> docker tag f3fd02dfb213 fandree/rust-vmm-dev:aarch64
-> docker push fandree/rust-vmm-dev
+> docker tag f3fd02dfb213 rustvmm/dev:v2_aarch64
+> docker push rustvmm/dev:v2_aarch64
 ```
 
 You will need to redo all steps on a x86_64 platform so the containers are kept
 in sync (same package versions on both x86_64 and aarch64).
 
 ```bash
-> docker build -t rust-vmm-dev:x86_64 -f Dockerfile.x86_64 .
-> docker tag XXXXXXXX fandree/rust-vmm-dev:x86_64
-> docker push fandree/rust-vmm-dev
+> docker build -t rustvmm/dev:v2_x86_64 -f Dockerfile.x86_64 .
+> docker tag XXXXXXXX rustvmm/dev:v2_x86_64
+> docker push rustvmm/dev:v2_x86_64
 ```
 
-Now that new versions of the tags `x86_64` and `aarch64` are pushed to Docker
-Hub, we can go ahead and also update the latest tag using
+Now that the tags `v2_x86_64` and `v2_aarch64` are pushed to Docker Hub, we can
+go ahead and also create a new version tag that points to these two builds
+using
 [docker manifest](https://docs.docker.com/engine/reference/commandline/manifest/).
 
 ```bash
 docker manifest create \
-        fandree/rust-vmm-dev:latest \
-        fandree/rust-vmm-dev:x86_64 \
-        fandree/rust-vmm-dev:aarch64
-docker manifest push fandree/rust-vmm-dev:latest
+        rustvmm/dev:v2 \
+        rustvmm/dev:v2_x86_64 \
+        rustvmm/dev:v2_aarch64
+docker manifest push rustvmm/dev:v2
 ```
 
 If it is the first time you are creating a docker manifest, most likely it will
