@@ -11,7 +11,7 @@ RUN apt-get -y install gcc
 # Installing rustup.
 RUN apt-get -y install curl
 # Install a fixed version of rust
-curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOLCHAIN"
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOLCHAIN"
 
 # Installing rust tools used by the rust-vmm CI.
 RUN rustup component add rustfmt
