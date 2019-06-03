@@ -8,6 +8,9 @@ RUN apt-get update
 
 RUN apt-get -y install gcc
 
+# Install to extract bzImage 
+RUN apt-get -y rpm2cpio
+
 # Installing rustup.
 RUN apt-get -y install curl
 # Install a fixed version of rust
