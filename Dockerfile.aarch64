@@ -1,5 +1,5 @@
 FROM ubuntu:18.04
-ARG RUST_TOOLCHAIN="1.33.0"
+ARG RUST_TOOLCHAIN="1.34.0"
 
 # Adding rust binaries to PATH.
 ENV PATH="$PATH:/root/.cargo/bin"
@@ -15,9 +15,7 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOL
 
 # Installing rust tools used by the rust-vmm CI.
 RUN rustup component add rustfmt
-# clippy is not yet supported in stable rust for aarch64.
-# Should be available starting with 12 April 2019.
-# RUN rustup component add clippy
+RUN rustup component add clippy
 RUN cargo install cargo-kcov
 
 # Installing other rust targets.
