@@ -7,14 +7,14 @@ The container is available on Docker Hub and has support for x86_64 and
 aarch64 platforms.
 
 ```bash
-docker pull rust-vmm/dev:v1
+docker pull rustvmm/dev:v1
 ```
 
 For the latest available tag, please check the `rustvmm/dev` builds available
 on [Docker Hub](https://hub.docker.com/r/rustvmm/dev/tags).
 
 Depending on which platform you're running the command from, docker will pull
-either `rust-vmm/dev:v1_aarch64` or `rust-vmm/dev:v1_x86_64`.
+either `rustvmm/dev:v1_aarch64` or `rustvmm/dev:v1_x86_64`.
 
 For now rust is installed only for the root user.
 
@@ -29,7 +29,7 @@ Example of running cargo build on the kvm-ioctls crate:
 > git clone git@github.com:rust-vmm/kvm-ioctls.git
 > cd kvm-ioctls/
 > docker run --volume $(pwd):/kvm-ioctls \
-         rust-vmm/dev:v1 \
+         rustvmm/dev:v1 \
          /bin/bash -c "cd /kvm-ioctls && cargo build --release"
  Downloading crates ...
   Downloaded libc v0.2.48
@@ -70,10 +70,10 @@ On an aarch64 platform:
 ```bash
 > cd rust-vmm-dev-container
 > # Build a container image for aarch64
-> docker build -t rust-vmm-dev:aarch64 -f Dockerfile.aarch64 .
+> docker build -t rustvmm/dev:aarch64 -f Dockerfile.aarch64 .
 > docker images
 REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
-rust-vmm/dev           aarch64             f3fd02dfb213        21 hours ago        1.13GB
+rustvmm/dev            aarch64             f3fd02dfb213        21 hours ago        1.13GB
 ubuntu                 18.04               0926e73e5245        3 weeks ago         80.4MB
 >
 > docker tag f3fd02dfb213 rustvmm/dev:v2_aarch64
