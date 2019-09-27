@@ -51,9 +51,7 @@ Python packages:
 Cargo plugins:
 - [rustfmt](https://github.com/rust-lang/rustfmt)
 - [cargo-kcov](https://github.com/kennytm/cargo-kcov)
-- [clippy](https://github.com/rust-lang/rust-clippy) - only available on
-  x86_64. For details check this issue:
-  https://github.com/rust-lang/rust-clippy/issues/3682
+- [clippy](https://github.com/rust-lang/rust-clippy)
 
 Rust targets on x86_64:
 - x86_64-unknown-linux-gnu
@@ -70,7 +68,7 @@ On an aarch64 platform:
 ```bash
 > cd rust-vmm-dev-container
 > # Build a container image for aarch64
-> docker build -t rustvmm/dev:aarch64 -f Dockerfile.aarch64 .
+> docker build -t rustvmm/dev:aarch64 -f Dockerfile .
 > docker images
 REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
 rustvmm/dev            aarch64             f3fd02dfb213        21 hours ago        1.13GB
@@ -84,7 +82,7 @@ You will need to redo all steps on a x86_64 platform so the containers are kept
 in sync (same package versions on both x86_64 and aarch64).
 
 ```bash
-> docker build -t rustvmm/dev:v4_x86_64 -f Dockerfile.x86_64 .
+> docker build -t rustvmm/dev:v4_x86_64 -f Dockerfile .
 > docker tag XXXXXXXX rustvmm/dev:v4_x86_64
 > docker push rustvmm/dev:v4_x86_64
 ```

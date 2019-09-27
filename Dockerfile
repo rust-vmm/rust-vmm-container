@@ -4,7 +4,7 @@ ARG RUST_TOOLCHAIN="1.35.0"
 # Adding rust binaries to PATH.
 ENV PATH="$PATH:/root/.cargo/bin"
 
-RUN apt update
+RUN apt-get update
 
 RUN apt-get -y install gcc
 
@@ -19,15 +19,15 @@ RUN rustup component add clippy
 RUN cargo install cargo-kcov
 
 # Installing other rust targets.
-RUN rustup target add aarch64-unknown-linux-musl
+RUN rustup target add $(uname -m)-unknown-linux-musl
 
 # Installing kcov dependencies.
 RUN apt-get -y install cmake g++ pkg-config jq
 RUN apt-get -y install libcurl4-openssl-dev libelf-dev libdw-dev binutils-dev libiberty-dev
 
 # Installing kcov.
-# For some strange reason, the command requires python to be installed
-RUN apt-get -y install python
+# For some strange reason, the command requires python3 to be installed
+RUN apt-get -y install python3
 RUN cargo kcov --print-install-kcov-sh | sh
 
 # Installing python3.6 & pytest.
