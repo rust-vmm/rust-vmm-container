@@ -63,12 +63,15 @@ Rust targets on aarch64:
 
 ### Publishing a New Version
 
+In this example, we assume the current version is `v3` and we want to publish
+a newer `v4` container version.
+
 On an aarch64 platform:
 
 ```bash
 > cd rust-vmm-dev-container
 > # Build a container image for aarch64
-> docker build -t rustvmm/dev:aarch64 -f Dockerfile .
+> docker build -t rustvmm/dev:v4_aarch64 -f Dockerfile .
 > docker images
 REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
 rustvmm/dev            aarch64             f3fd02dfb213        21 hours ago        1.13GB
