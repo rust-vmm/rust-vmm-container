@@ -14,8 +14,8 @@ RUN apt-get -y install curl
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOLCHAIN"
 
 # Installing rust tools used by the rust-vmm CI.
-RUN rustup component add rustfmt
-RUN rustup component add clippy
+RUN if [ $(uname -m) = "x86_64" ]; then rustup component add rustfmt; fi
+RUN if [ $(uname -m) = "x86_64" ]; then rustup component add clippy; fi
 RUN cargo install cargo-kcov
 
 # Installing other rust targets.
