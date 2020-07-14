@@ -34,3 +34,8 @@ RUN cargo kcov --print-install-kcov-sh | sh
 RUN apt-get -y install python3.6
 RUN apt-get -y install python3-pip
 RUN pip3 install pytest
+
+# Install git.
+RUN apt-get -y install git
+# Install critcmp.
+RUN cargo install critcmp
