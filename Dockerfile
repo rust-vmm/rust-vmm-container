@@ -10,7 +10,7 @@ RUN apt-get -y install gcc
 
 # Installing rustup.
 RUN apt-get -y install curl
-# Install a fixed version of rust
+# Install a fixed version of rust.
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOLCHAIN"
 
 # Installing rust tools used by the rust-vmm CI.
@@ -26,7 +26,7 @@ RUN apt-get -y install cmake g++ pkg-config jq
 RUN apt-get -y install libcurl4-openssl-dev libelf-dev libdw-dev binutils-dev libiberty-dev
 
 # Installing kcov.
-# For some strange reason, the command requires python3 to be installed
+# For some strange reason, the command requires python3 to be installed.
 RUN apt-get -y install python3
 RUN cargo kcov --print-install-kcov-sh | sh
 
@@ -39,3 +39,10 @@ RUN pip3 install pytest
 RUN apt-get -y install git
 # Install critcmp.
 RUN cargo install critcmp
+
+# Install cargo audit and cargo license.
+# cargo audit needs openssl.
+RUN apt-get -y install libssl-dev
+# The latest cargo audit needs some Rust features that are unstable in 1.44.1.
+RUN cargo install cargo-audit --vers 0.11.2
+RUN cargo install cargo-license
