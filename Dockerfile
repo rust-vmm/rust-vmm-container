@@ -43,8 +43,7 @@ RUN cargo install critcmp
 # Install cargo audit and cargo license.
 # cargo audit needs openssl.
 RUN apt-get -y install libssl-dev
-# The latest cargo audit needs some Rust features that are unstable in 1.44.1.
-RUN cargo install cargo-audit --vers 0.11.2
+RUN cargo install cargo-audit
 RUN cargo install cargo-license
 
 # Install cpio and bc, to build kernels.
