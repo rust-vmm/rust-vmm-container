@@ -46,5 +46,8 @@ RUN apt-get -y install libssl-dev
 RUN cargo install cargo-audit
 RUN cargo install cargo-license
 
-# Install cpio and bc, to build kernels.
-RUN apt-get -y install cpio bc
+# Install utilities to build kernels.
+RUN apt-get -y install cpio bc flex bison wget
+
+# Install debootstrap to build rootfs images.
+RUN apt-get -y install debootstrap
