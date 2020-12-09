@@ -1,24 +1,35 @@
 # rust-vmm-container
 
-**rustvmm/dev** is a container with all dependencies used for running
-rust-vmm integration tests.
+**`rustvmm/dev`** is a container with all dependencies used for running
+`rust-vmm` integration and performance tests.
 
-The container is available on Docker Hub and has support for x86_64 and
-aarch64 platforms.
-
-```bash
-docker pull rustvmm/dev:v3
-```
+The container is available on Docker Hub and has support for `x86_64` and
+`aarch64` platforms.
 
 For the latest available tag, please check the `rustvmm/dev` builds available
-on [Docker Hub](https://hub.docker.com/r/rustvmm/dev/tags).
+on [Docker Hub](https://hub.docker.com/r/rustvmm/dev/tags). Alternatively, you
+can check out the Bash expression below.
+
+```bash
+DOCKERHUB="https://registry.hub.docker.com/v1/repositories/rustvmm/dev/tags"
+
+VERSION=$(wget -q "$DOCKERHUB" -O -                                           \
+  | sed -e 's/[][]//g' -e 's/"//g' -e 's/ //g'                                \
+  | tr '}' '\n'                                                               \
+  | awk -F: '{print $3}'                                                      \
+  | grep -E "v[0-9]+$"                                                        \
+  | sort -r                                                                   \
+  | head -1)
+
+docker pull rustvmm/dev:$VERSION
+```
 
 Depending on which platform you're running the command from, docker will pull
-either `rustvmm/dev:v3_aarch64` or `rustvmm/dev:v3_x86_64`.
+either `rustvmm/dev:vX_aarch64` or `rustvmm/dev:vX_x86_64`.
 
 For now rust is installed only for the root user.
 
-### Using the Container
+## Using the Container
 
 The container is currently used for running the integration tests for the
 [kvm-ioctls](https://github.com/rust-vmm/kvm-ioctls) crate.
@@ -40,33 +51,51 @@ Example of running cargo build on the kvm-ioctls crate:
     Finished release [optimized] target(s) in 5.63s
 ```
 
-### Available Tools
+## Available Tools
 
 The container currently has the Rust toolchain version 1.35.0 and Python3.6.
 
 Python packages:
-- [pip3](https://pip.pypa.io/en/stable/)
-- [pytest](https://docs.pytest.org/en/latest/)
+
+- [`pip3`](https://pip.pypa.io/en/stable/)
+- [`pytest`](https://docs.pytest.org/en/latest/)
+- [`pexpect`](https://pypi.org/project/pexpect/)
 
 Cargo plugins:
-- [rustfmt](https://github.com/rust-lang/rustfmt)
-- [cargo-kcov](https://github.com/kennytm/cargo-kcov)
-- [clippy](https://github.com/rust-lang/rust-clippy)
 
-Rust targets on x86_64:
-- x86_64-unknown-linux-gnu
-- x86_64-unknown-linux-musl
+- [`cargo-audit`](https://github.com/RustSec/cargo-audit)
+- [`cargo-kcov`](https://github.com/kennytm/cargo-kcov)
+- [`cargo-license`](https://github.com/onur/cargo-license)
+- [`clippy`](https://github.com/rust-lang/rust-clippy)
+- [`critcmp`](https://github.com/BurntSushi/critcmp)
+- [`rustfmt`](https://github.com/rust-lang/rustfmt)
 
-Rust targets on aarch64:
-- aarch64-unknown-linux-gnu
-- aarch64-unknown-linux-musl
+Rust targets on `x86_64`:
 
-### Publishing a New Version
+- `x86_64-unknown-linux-gnu`
+- `x86_64-unknown-linux-musl`
+
+Rust targets on `aarch64`:
+
+- `aarch64-unknown-linux-gnu`
+- `aarch64-unknown-linux-musl`
+
+Miscellaneous utilities:
+
+- `bc`
+- `bison`
+- `cpio`
+- `debootstrap`
+- `flex`
+- `git`
+- `wget`
+
+## Publishing a New Version
 
 In this example, we assume the current version is `v3` and we want to publish
 a newer `v4` container version.
 
-On an aarch64 platform:
+On an `aarch64` platform:
 
 ```bash
 > cd rust-vmm-dev-container
@@ -81,8 +110,8 @@ ubuntu                 18.04               0926e73e5245        3 weeks ago      
 > docker push rustvmm/dev:v4_aarch64
 ```
 
-You will need to redo all steps on a x86_64 platform so the containers are kept
-in sync (same package versions on both x86_64 and aarch64).
+You will need to redo all steps on an `x86_64` platform so the containers are
+kept in sync (same package versions on both `x86_64` and `aarch64`).
 
 ```bash
 > docker build -t rustvmm/dev:v4_x86_64 -f Dockerfile .
