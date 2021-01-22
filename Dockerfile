@@ -12,6 +12,8 @@ RUN apt-get -y install gcc
 RUN apt-get -y install curl
 # Install a fixed version of rust.
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOLCHAIN"
+# Install the nightly so that we can run cargo fmt on code examples.
+RUN rustup toolchain install nightly
 
 # Installing rust tools used by the rust-vmm CI.
 RUN if [ $(uname -m) = "x86_64" ]; then rustup component add rustfmt; fi
