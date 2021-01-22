@@ -1,5 +1,5 @@
 FROM ubuntu:18.04
-ARG RUST_TOOLCHAIN="1.44.1"
+ARG RUST_TOOLCHAIN="1.49"
 
 # Adding rust binaries to PATH.
 ENV PATH="$PATH:/root/.cargo/bin"
@@ -24,6 +24,7 @@ RUN cargo install cargo-kcov
 RUN rustup target add $(uname -m)-unknown-linux-musl
 
 # Installing kcov dependencies.
+RUN apt-get -y install libssl-dev
 RUN apt-get -y install cmake g++ pkg-config jq
 RUN apt-get -y install libcurl4-openssl-dev libelf-dev libdw-dev binutils-dev libiberty-dev
 
