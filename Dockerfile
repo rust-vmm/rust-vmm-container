@@ -54,3 +54,6 @@ RUN apt-get -y install cpio bc flex bison wget
 
 # Install debootstrap to build rootfs images.
 RUN apt-get -y install debootstrap
+
+# Install shell check
+RUN apt-get -y --no-install-recommends install shellcheck

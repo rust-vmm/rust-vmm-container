@@ -89,6 +89,7 @@ Miscellaneous utilities:
 - `flex`
 - `git`
 - `wget`
+- `shellcheck`
 
 ## Publishing a New Version
 
