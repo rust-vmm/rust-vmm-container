@@ -60,6 +60,7 @@ Python packages:
 - [`boto3`](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html#)
 - [`pip3`](https://pip.pypa.io/en/stable/)
 - [`pytest`](https://docs.pytest.org/en/latest/)
+- [`pytest-timeout`](https://pypi.org/project/pytest-timeout/)
 - [`pexpect`](https://pypi.org/project/pexpect/)
 
 Cargo plugins:
