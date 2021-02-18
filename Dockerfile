@@ -38,6 +38,7 @@ RUN apt-get -y install python3.6
 RUN apt-get -y install python3-pip
 RUN pip3 install pytest pexpect
 RUN pip3 install boto3
+RUN pip3 install pytest-timeout
 
 # Install git.
 RUN apt-get -y install git
