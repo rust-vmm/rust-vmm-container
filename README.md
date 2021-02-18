@@ -57,6 +57,7 @@ The container currently has the Rust toolchain version 1.46.0 and Python3.6.
 
 Python packages:
 
+- [`boto3`](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html#)
 - [`pip3`](https://pip.pypa.io/en/stable/)
 - [`pytest`](https://docs.pytest.org/en/latest/)
 - [`pexpect`](https://pypi.org/project/pexpect/)
