@@ -13,13 +13,14 @@ can check out the Bash expression below.
 ```bash
 DOCKERHUB="https://registry.hub.docker.com/v1/repositories/rustvmm/dev/tags"
 
-VERSION=$(wget -q "$DOCKERHUB" -O -                                           \
-  | sed -e 's/[][]//g' -e 's/"//g' -e 's/ //g'                                \
-  | tr '}' '\n'                                                               \
-  | awk -F: '{print $3}'                                                      \
-  | grep -E "v[0-9]+$"                                                        \
-  | sort -r                                                                   \
-  | head -1)
+VERSION=$(wget -c -q $DOCKERHUB -O -  \
+  | tr -d '[]" '                      \
+  | tr '}' '\n'                       \
+  | awk -F: '{print $3}'              \
+  | grep -v "_"                       \
+  | cut -c 2-                         \
+  | sort -n                           \
+  | tail -1                           )
 
 docker pull rustvmm/dev:$VERSION
 ```
@@ -94,33 +95,16 @@ Miscellaneous utilities:
 - `shellcheck`
 
 ## Publishing a New Version
-
-In this example, we assume the current version is `v3` and we want to publish
-a newer `v4` container version.
-
 On an `aarch64` platform:
 
 ```bash
 > cd rust-vmm-dev-container
-> # Build a container image for aarch64
-> docker build -t rustvmm/dev:v4_aarch64 -f Dockerfile .
-> docker images
-REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
-rustvmm/dev            aarch64             f3fd02dfb213        21 hours ago        1.13GB
-ubuntu                 18.04               0926e73e5245        3 weeks ago         80.4MB
->
-> docker tag f3fd02dfb213 rustvmm/dev:v4_aarch64
-> docker push rustvmm/dev:v4_aarch64
+> ./docker.sh build
+> ./docker.sh push
 ```
 
 You will need to redo all steps on an `x86_64` platform so the containers are
 kept in sync (same package versions on both `x86_64` and `aarch64`).
-
-```bash
-> docker build -t rustvmm/dev:v4_x86_64 -f Dockerfile .
-> docker tag XXXXXXXX rustvmm/dev:v4_x86_64
-> docker push rustvmm/dev:v4_x86_64
-```
 
 Now that the tags `v4_x86_64` and `v4_aarch64` are pushed to Docker Hub, we can
 go ahead and also create a new version tag that points to these two builds
@@ -128,11 +112,7 @@ using
 [docker manifest](https://docs.docker.com/engine/reference/commandline/manifest/).
 
 ```bash
-docker manifest create \
-        rustvmm/dev:v4 \
-        rustvmm/dev:v4_x86_64 \
-        rustvmm/dev:v4_aarch64
-docker manifest push rustvmm/dev:v4
+./docker.sh manifest
 ```
 
 If it is the first time you are creating a docker manifest, most likely it will

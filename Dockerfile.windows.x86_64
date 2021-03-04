@@ -1,6 +1,8 @@
 # escape=`
-
 ARG WIN_VER="ltsc2019"
+ARG GIT_COMMIT
+ARG GIT_BRANCH
+ARG RUST_TOOLCHAIN
 
 FROM mcr.microsoft.com/windows/servercore:$WIN_VER
 
@@ -33,3 +35,5 @@ RUN rustup component add clippy
 RUN choco install git -y
 
 RUN rmdir /s /q c:\TEMP
+
+RUN echo "{\"rev\":\"$GIT_COMMIT\",\"branch\":\"${GIT_BRANCH}\",\"cargo-params\":\"${CARGO_PARAMS}\" }" > /buildinfo.json
