@@ -1,5 +1,7 @@
 FROM ubuntu:18.04
-ARG RUST_TOOLCHAIN="1.46"
+ARG RUST_TOOLCHAIN
+ARG GIT_COMMIT
+ARG GIT_BRANCH
 
 # Adding rust binaries to PATH.
 ENV PATH="$PATH:/root/.cargo/bin"
@@ -59,3 +61,5 @@ RUN apt-get -y install debootstrap
 
 # Install shell check
 RUN apt-get -y --no-install-recommends install shellcheck
+
+RUN echo "{\"rev\":\"$GIT_COMMIT\",\"branch\":\"${GIT_BRANCH}\"}" > /buildinfo.json
