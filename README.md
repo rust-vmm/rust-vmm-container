@@ -54,7 +54,7 @@ Example of running cargo build on the kvm-ioctls crate:
 
 ## Available Tools
 
-The container currently has the Rust toolchain version 1.46.0 and Python3.6.
+The container currently has the Rust toolchain version 1.52.1 and Python3.6.
 
 Python packages:
 
@@ -100,7 +100,7 @@ On an `aarch64` platform:
 ```bash
 > cd rust-vmm-dev-container
 > ./docker.sh build
-> ./docker.sh push
+> ./docker.sh publish
 ```
 
 You will need to redo all steps on an `x86_64` platform so the containers are
