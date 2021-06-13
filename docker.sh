@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-RUST_TOOLCHAIN=1.46
+RUST_TOOLCHAIN=1.52.1
 ARCH=$(uname -m)
 GIT_COMMIT=$(git rev-parse HEAD)
 GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -27,7 +27,7 @@ latest(){
 build_tag(){
   latest_version=$(latest)
   new_version=$((latest_version + 1))
-  new_tag=${DOCKER_TAG}:${new_version}_$ARCH
+  new_tag=${DOCKER_TAG}:v${new_version}_$ARCH
   echo "$new_tag"
 }
 
@@ -48,7 +48,7 @@ build(){
 manifest(){
   latest_version=$(latest)
   new_version=$((latest_version + 1))
-  new_tag=${DOCKER_TAG}:${new_version}
+  new_tag=${DOCKER_TAG}:v${new_version}
   docker manifest create \
         $new_tag \
         "${new_tag}_x86_64" \
