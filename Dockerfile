@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 ARG RUST_TOOLCHAIN
 ARG GIT_COMMIT
 ARG GIT_BRANCH
@@ -27,6 +27,7 @@ RUN rustup target add $(uname -m)-unknown-linux-musl
 
 # Installing kcov dependencies.
 RUN apt-get -y install libssl-dev
+RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
 RUN apt-get -y install cmake g++ pkg-config jq
 RUN apt-get -y install libcurl4-openssl-dev libelf-dev libdw-dev binutils-dev libiberty-dev
 
