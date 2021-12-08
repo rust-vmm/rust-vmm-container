@@ -63,4 +63,12 @@ RUN apt-get -y install debootstrap
 # Install shell check
 RUN apt-get -y --no-install-recommends install shellcheck
 
+# Install bindgen build tools
+RUN apt-get -y --no-install-recommends install llvm-dev libclang-dev clang
+
+# Install musl build tools and headers
+RUN mkdir /opt/musl && curl https://musl.cc/$(uname -m)-linux-musl-native.tgz | tar -xz  -C /opt/musl
+RUN ln -s /opt/musl/$(uname -m)-linux-musl-native/bin/gcc /usr/local/bin/musl-gcc
+RUN ln -s /opt/musl/$(uname -m)-linux-musl-native/lib/libc.so /usr/local/bin/musl-ldd
+
 RUN echo "{\"rev\":\"$GIT_COMMIT\",\"branch\":\"${GIT_BRANCH}\"}" > /buildinfo.json
