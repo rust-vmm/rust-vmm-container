@@ -17,6 +17,10 @@ RUN apt-get update && \
     libdw-dev binutils-dev libiberty-dev make \
     # utilities to build kernels
     cpio bc flex bison wget xz-utils fakeroot \
+    # utilities to build usersapce packages
+    autoconf autoconf-archive automake libtool \
+    # bindgen dependency
+    libclang-dev \
     # debootstrap to build rootfs images
     debootstrap \
     # iproute2 for creating tap device
