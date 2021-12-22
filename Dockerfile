@@ -2,6 +2,7 @@ FROM ubuntu:20.04
 ARG RUST_TOOLCHAIN
 ARG GIT_COMMIT
 ARG GIT_BRANCH
+ARG ARCH
 
 # Adding rust binaries to PATH.
 ENV PATH="$PATH:/root/.cargo/bin"
@@ -18,12 +19,12 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOL
 RUN rustup toolchain install nightly
 
 # Installing rust tools used by the rust-vmm CI.
-RUN if [ $(uname -m) = "x86_64" ]; then rustup component add rustfmt; fi
-RUN if [ $(uname -m) = "x86_64" ]; then rustup component add clippy; fi
+RUN if [ $ARCH = "x86_64" ]; then rustup component add rustfmt; fi
+RUN if [ $ARCH = "x86_64" ]; then rustup component add clippy; fi
 RUN cargo install cargo-kcov
 
 # Installing other rust targets.
-RUN rustup target add $(uname -m)-unknown-linux-musl
+RUN rustup target add $ARCH-unknown-linux-musl
 
 # Installing kcov dependencies.
 RUN apt-get -y install libssl-dev
@@ -67,8 +68,8 @@ RUN apt-get -y --no-install-recommends install shellcheck
 RUN apt-get -y --no-install-recommends install llvm-dev libclang-dev clang
 
 # Install musl build tools and headers
-RUN mkdir /opt/musl && curl https://musl.cc/$(uname -m)-linux-musl-native.tgz | tar -xz  -C /opt/musl
-RUN ln -s /opt/musl/$(uname -m)-linux-musl-native/bin/gcc /usr/local/bin/musl-gcc
-RUN ln -s /opt/musl/$(uname -m)-linux-musl-native/lib/libc.so /usr/local/bin/musl-ldd
+RUN mkdir /opt/musl && curl https://musl.cc/$ARCH-linux-musl-native.tgz | tar -xz  -C /opt/musl
+RUN ln -s /opt/musl/$ARCH-linux-musl-native/bin/gcc /usr/local/bin/musl-gcc
+RUN ln -s /opt/musl/$ARCH-linux-musl-native/lib/libc.so /usr/local/bin/musl-ldd
 
 RUN echo "{\"rev\":\"$GIT_COMMIT\",\"branch\":\"${GIT_BRANCH}\"}" > /buildinfo.json
