@@ -54,7 +54,7 @@ Example of running cargo build on the kvm-ioctls crate:
 
 ## Available Tools
 
-The container currently has the Rust toolchain version 1.52.1 and Python3.6.
+The container currently has the Rust toolchain version 1.54 and Python3.6.
 
 Python packages:
 
