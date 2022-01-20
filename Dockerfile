@@ -6,61 +6,35 @@ ARG GIT_BRANCH
 # Adding rust binaries to PATH.
 ENV PATH="$PATH:/root/.cargo/bin"
 
-RUN apt-get update
+# Install all required packages in one go to optimize the image
+# https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
+# DEBIAN_FRONTEND is set for tzdata.
+RUN apt-get update && \
+    DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
+    curl gcc git python3 python3-pip shellcheck \
+    # kcov dependencies
+    libssl-dev tzdata cmake g++ pkg-config jq libcurl4-openssl-dev libelf-dev \
+    libdw-dev binutils-dev libiberty-dev make \
+    # utilities to build kernels
+    cpio bc flex bison wget xz-utils fakeroot \
+    # debootstrap to build rootfs images
+    debootstrap \
+    # cleanup
+    && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get -y install gcc
+# Install pytest and boto3.
+RUN pip3 install pytest pexpect boto3 pytest-timeout
 
-# Installing rustup.
-RUN apt-get -y install curl
-# Install a fixed version of rust.
+# Install rustup and a fixed version of Rust.
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOLCHAIN"
-# Install the nightly so that we can run cargo fmt on code examples.
-RUN rustup toolchain install nightly
 
-# Installing rust tools used by the rust-vmm CI.
-RUN if [ $(uname -m) = "x86_64" ]; then rustup component add rustfmt; fi
-RUN if [ $(uname -m) = "x86_64" ]; then rustup component add clippy; fi
-RUN cargo install cargo-kcov
-
-# Installing other rust targets.
+# Install other rust targets.
 RUN rustup target add $(uname -m)-unknown-linux-musl
 
-# Installing kcov dependencies.
-RUN apt-get -y install libssl-dev
-RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
-RUN apt-get -y install cmake g++ pkg-config jq
-RUN apt-get -y install libcurl4-openssl-dev libelf-dev libdw-dev binutils-dev libiberty-dev
+# Install cargo tools.
+RUN cargo install cargo-kcov critcmp cargo-audit cargo-license
 
-# Installing kcov.
-# For some strange reason, the command requires python3 to be installed.
-RUN apt-get -y install python3
+# Install kcov.
 RUN cargo kcov --print-install-kcov-sh | sh
-
-# Installing python3.6 & pytest.
-RUN apt-get -y install python3.6
-RUN apt-get -y install python3-pip
-RUN pip3 install pytest pexpect
-RUN pip3 install boto3
-RUN pip3 install pytest-timeout
-
-# Install git.
-RUN apt-get -y install git
-# Install critcmp.
-RUN cargo install critcmp
-
-# Install cargo audit and cargo license.
-# cargo audit needs openssl.
-RUN apt-get -y install libssl-dev
-RUN cargo install cargo-audit
-RUN cargo install cargo-license
-
-# Install utilities to build kernels.
-RUN apt-get -y install cpio bc flex bison wget
-
-# Install debootstrap to build rootfs images.
-RUN apt-get -y install debootstrap
-
-# Install shell check
-RUN apt-get -y --no-install-recommends install shellcheck
 
 RUN echo "{\"rev\":\"$GIT_COMMIT\",\"branch\":\"${GIT_BRANCH}\"}" > /buildinfo.json

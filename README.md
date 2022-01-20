@@ -41,7 +41,7 @@ Example of running cargo build on the kvm-ioctls crate:
 > git clone git@github.com:rust-vmm/kvm-ioctls.git
 > cd kvm-ioctls/
 > docker run --volume $(pwd):/kvm-ioctls \
-         rustvmm/dev:v3 \
+         rustvmm/dev:v15 \
          /bin/bash -c "cd /kvm-ioctls && cargo build --release"
  Downloading crates ...
   Downloaded libc v0.2.48
@@ -54,7 +54,7 @@ Example of running cargo build on the kvm-ioctls crate:
 
 ## Available Tools
 
-The container currently has the Rust toolchain version 1.54 and Python3.6.
+The container currently has the Rust toolchain version 1.58.1 and Python3.8.
 
 Python packages:
 
