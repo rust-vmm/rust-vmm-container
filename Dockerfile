@@ -19,6 +19,8 @@ RUN apt-get update && \
     cpio bc flex bison wget xz-utils fakeroot \
     # debootstrap to build rootfs images
     debootstrap \
+    # iproute2 for creating tap device
+    iproute2 \
     # cleanup
     && rm -rf /var/lib/apt/lists/*
 
