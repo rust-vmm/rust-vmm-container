@@ -30,6 +30,12 @@ RUN pip3 install pytest pexpect boto3 pytest-timeout
 # Install rustup and a fixed version of Rust.
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOLCHAIN"
 
+# Install nightly (needed for fuzzing)
+RUN rustup install nightly
+
+# Install libfuzzer
+RUN cargo install cargo-fuzz
+
 # Install other rust targets.
 RUN rustup target add $(uname -m)-unknown-linux-musl
 
