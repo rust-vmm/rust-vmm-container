@@ -13,7 +13,7 @@ can check out the Bash expression below.
 ```bash
 DOCKERHUB="https://registry.hub.docker.com/v1/repositories/rustvmm/dev/tags"
 
-VERSION=$(wget -c -q $DOCKERHUB -O -  \
+VERSION=v$(wget -c -q $DOCKERHUB -O -  \
   | tr -d '[]" '                      \
   | tr '}' '\n'                       \
   | awk -F: '{print $3}'              \
@@ -26,7 +26,7 @@ docker pull rustvmm/dev:$VERSION
 ```
 
 Depending on which platform you're running the command from, docker will pull
-either `rustvmm/dev:vX_aarch64` or `rustvmm/dev:vX_x86_64`.
+either `rustvmm/dev:$VERSION_aarch64` or `rustvmm/dev:$VERSION_x86_64`.
 
 For now rust is installed only for the root user.
 
@@ -41,7 +41,7 @@ Example of running cargo build on the kvm-ioctls crate:
 > git clone git@github.com:rust-vmm/kvm-ioctls.git
 > cd kvm-ioctls/
 > docker run --volume $(pwd):/kvm-ioctls \
-         rustvmm/dev:v15 \
+         rustvmm/dev:$VERSION \
          /bin/bash -c "cd /kvm-ioctls && cargo build --release"
  Downloading crates ...
   Downloaded libc v0.2.48
