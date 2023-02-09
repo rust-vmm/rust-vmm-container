@@ -5,21 +5,14 @@ ARCH=$(uname -m)
 GIT_COMMIT=$(git rev-parse HEAD)
 GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 DOCKER_TAG=rustvmm/dev
-DOCKERHUB_LINK=https://hub.docker.com/r/${DOCKER_TAG}/tags
-
-# Get docker tags
-dtags () {
-    local image="${1}";
-    wget -c -q https://registry.hub.docker.com/v1/repositories/"${image}"/tags -O - \
-    | tr -d '[]" ' \
-    | tr '}' '\n' \
-    | awk -F: '{print $3}'
-}
 
 # Get the latest published version. Returns a number.
 # If latest is v100, returns 100.
+# This works as long as we have less than 100 tags because we set the page size to 100,
+# once we have more than that this script needs to be updated.
 latest(){
-  dtags $DOCKER_TAG | grep -v "_" | cut -c 2- | sort -n | tail -1
+  curl -L -s 'https://registry.hub.docker.com/v2/repositories/rustvmm/dev/tags?page_size=100'| \
+    jq '."results"[]["name"]' |  sed 's/"//g' | cut -c 2- | grep -E "^[0-9]+$" | sort -n | tail -1
 }
 
 # Builds the tag for the newest versions. It needs the last published version number.
