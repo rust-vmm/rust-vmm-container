@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-RUST_TOOLCHAIN=1.66.1
+RUST_TOOLCHAIN=1.67.1
 ARCH=$(uname -m)
 GIT_COMMIT=$(git rev-parse HEAD)
 GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
