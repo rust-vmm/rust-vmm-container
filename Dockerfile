@@ -51,7 +51,7 @@ RUN cargo kcov --print-install-kcov-sh | sh
 
 # Install libgpiod (required by vhost-device crate)
 RUN cd /opt/ && \
-    git clone --depth 1 --branch v2.0-rc1 https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/ && \
+    git clone --depth 1 --branch v2.0 https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/ && \
     cd libgpiod && ./autogen.sh --prefix=/usr && make && make install; \
     cd
 
