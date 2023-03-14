@@ -14,11 +14,16 @@ latest(){
     jq '."results"[]["name"]' |  sed 's/"//g' | cut -c 2- | grep -E "^[0-9]+$" | sort -n | tail -1
 }
 
+next_version() {
+    latest_version=$(latest)
+    new_version=$((latest_version + 1))
+    echo "$new_version"
+}
+
 # Builds the tag for the newest versions. It needs the last published version number.
 # Returns a valid docker tag.
 build_tag(){
-  latest_version=$(latest)
-  new_version=$((latest_version + 1))
+  new_version=$(next_version)
   new_tag=${DOCKER_TAG}:v${new_version}_$ARCH
   echo "$new_tag"
 }
@@ -67,7 +72,7 @@ case $1 in
     manifest;
     ;;
   "print-next-version")
-    build_tag;
+    next_version;
     ;;
   *)
    echo "Command $1 not supported. Try with 'publish', 'build', 'manifest' or 'print-next-version'. ";

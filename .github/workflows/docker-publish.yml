@@ -44,6 +44,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_ACCOUNT_ID }}
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+      - name: Generate next docker tag
+        run: |
+          echo "VERSION=$(./docker.sh print-next-version)" >> $GITHUB_ENV
+          echo "Next version to be published is: ${{ env.VERSION }}"
 
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
@@ -52,9 +56,6 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: rustvmm/dev
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=raw,value={{./docker.sh print-next-version}}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -67,7 +68,7 @@ jobs:
           # This is needed so that a manifest is created, and we can have the same
           # docker container on both x86_64 and arm64.
           platforms: linux/amd64,linux/arm64
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ env.VERSION }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

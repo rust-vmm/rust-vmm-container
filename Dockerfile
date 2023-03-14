@@ -27,7 +27,7 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Install pytest and boto3.
-RUN pip3 install pytest pexpect boto3 pytest-timeout
+RUN pip3 install --no-cache-dir pytest pexpect boto3 pytest-timeout
 
 # Install rustup and a fixed version of Rust.
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOLCHAIN"
