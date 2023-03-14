@@ -1,7 +1,5 @@
 FROM ubuntu:22.04
 ARG RUST_TOOLCHAIN="1.67.1"
-ARG GIT_COMMIT
-ARG GIT_BRANCH
 
 # Adding rust binaries to PATH.
 ENV PATH="$PATH:/root/.cargo/bin"
@@ -54,5 +52,3 @@ RUN cd /opt/ && \
     git clone --depth 1 --branch v2.0 https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/ && \
     cd libgpiod && ./autogen.sh --prefix=/usr && make && make install; \
     cd
-
-RUN echo "{\"rev\":\"$GIT_COMMIT\",\"branch\":\"${GIT_BRANCH}\"}" > /buildinfo.json
