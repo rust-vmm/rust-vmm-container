@@ -68,7 +68,10 @@ case $1 in
   "manifest")
     manifest;
     ;;
+  "print-next-version")
+    build_tag;
+    ;;
   *)
-   echo "Command $1 not supported. Try with 'publish', 'build' or 'manifest'. ";
+   echo "Command $1 not supported. Try with 'publish', 'build', 'manifest' or 'print-next-version'. ";
    ;;
 esac
