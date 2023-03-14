@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 set -e
-RUST_TOOLCHAIN=1.67.1
 ARCH=$(uname -m)
 GIT_COMMIT=$(git rev-parse HEAD)
 GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -30,7 +29,6 @@ build_tag(){
 build(){
   new_tag=$(build_tag)
   docker build -t "$new_tag" \
-        --build-arg RUST_TOOLCHAIN=${RUST_TOOLCHAIN} \
         --build-arg GIT_BRANCH="${GIT_BRANCH}" \
         --build-arg GIT_COMMIT="${GIT_COMMIT}" \
         -f Dockerfile .
