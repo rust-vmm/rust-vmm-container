@@ -3,10 +3,10 @@ name: Docker
 on:
   push:
     branches: [ "main" ]
-    paths: Dockerfile
+    paths: [Dockerfile, .github/workflows/docker-publish.yml]
   pull_request:
     branches: [ "main" ]
-    paths: Dockerfile
+    paths: [Dockerfile, .github/workflows/docker-publish.yml]
 
 env:
   IMAGE_NAME: rustvmm/dev
