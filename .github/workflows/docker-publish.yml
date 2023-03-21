@@ -8,6 +8,9 @@ on:
     branches: [ "main" ]
     paths: Dockerfile
 
+env:
+  IMAGE_NAME: rustvmm/dev
+
 jobs:
   build:
 
