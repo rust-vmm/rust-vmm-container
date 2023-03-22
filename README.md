@@ -7,33 +7,14 @@ The container is available on Docker Hub and has support for `x86_64` and
 `aarch64` platforms.
 
 For the latest available tag, please check the `rustvmm/dev` builds available
-on [Docker Hub](https://hub.docker.com/r/rustvmm/dev/tags). Alternatively, you
-can check out the Bash expression below.
-
-```bash
-DOCKERHUB="https://registry.hub.docker.com/v1/repositories/rustvmm/dev/tags"
-
-VERSION=v$(wget -c -q $DOCKERHUB -O -  \
-  | tr -d '[]" '                      \
-  | tr '}' '\n'                       \
-  | awk -F: '{print $3}'              \
-  | grep -v "_"                       \
-  | cut -c 2-                         \
-  | sort -n                           \
-  | tail -1                           )
-
-docker pull rustvmm/dev:$VERSION
-```
-
-Depending on which platform you're running the command from, docker will pull
-either `rustvmm/dev:$VERSION_aarch64` or `rustvmm/dev:$VERSION_x86_64`.
+on [Docker Hub](https://hub.docker.com/r/rustvmm/dev/tags).
 
 For now rust is installed only for the root user.
 
 ## Using the Container
 
 The container is currently used for running the integration tests for the
-[kvm-ioctls](https://github.com/rust-vmm/kvm-ioctls) crate.
+majority of rust-vmm crates.
 
 Example of running cargo build on the kvm-ioctls crate:
 
