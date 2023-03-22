@@ -52,48 +52,6 @@ Example of running cargo build on the kvm-ioctls crate:
     Finished release [optimized] target(s) in 5.63s
 ```
 
-## Available Tools
-
-The container currently has the Rust toolchain version 1.58.1 and Python3.8.
-
-Python packages:
-
-- [`boto3`](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html#)
-- [`pip3`](https://pip.pypa.io/en/stable/)
-- [`pytest`](https://docs.pytest.org/en/latest/)
-- [`pytest-timeout`](https://pypi.org/project/pytest-timeout/)
-- [`pexpect`](https://pypi.org/project/pexpect/)
-
-Cargo plugins:
-
-- [`cargo-audit`](https://github.com/RustSec/cargo-audit)
-- [`cargo-kcov`](https://github.com/kennytm/cargo-kcov)
-- [`cargo-license`](https://github.com/onur/cargo-license)
-- [`clippy`](https://github.com/rust-lang/rust-clippy)
-- [`critcmp`](https://github.com/BurntSushi/critcmp)
-- [`rustfmt`](https://github.com/rust-lang/rustfmt)
-
-Rust targets on `x86_64`:
-
-- `x86_64-unknown-linux-gnu`
-- `x86_64-unknown-linux-musl`
-
-Rust targets on `aarch64`:
-
-- `aarch64-unknown-linux-gnu`
-- `aarch64-unknown-linux-musl`
-
-Miscellaneous utilities:
-
-- `bc`
-- `bison`
-- `cpio`
-- `debootstrap`
-- `flex`
-- `git`
-- `wget`
-- `shellcheck`
-
 ## Publishing a New Version
 
 A new container version is published for each PR merged to main that adds
