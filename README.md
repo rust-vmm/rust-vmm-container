@@ -95,6 +95,30 @@ Miscellaneous utilities:
 - `shellcheck`
 
 ## Publishing a New Version
+
+A new container version is published for each PR merged to main that adds
+changes to the [Dockerfile](Dockerfile) or the related scripts. Publishing the
+container happens automatically through the
+[.github/worflows](.github/workflows) and no manual intervention is required.
+
+You can check the progress of a commit being published to Docker Hub by looking
+at the GitHub commit history, and clicking on the status check of the relevant
+commit.
+
+![alt](img/container_build.png)
+
+### Manual Publish
+
+If for any reason the GitHub workflow is not working and a new container
+version was not automatically pushed when merging the Dockerfile changes to
+the main branch, you can follow the steps below for a manual publish.
+
+The rust-vmm organization on Docker Hub is free and thus has only 3 members
+that are allowed to publish containers:
+- [Andreea Florescu](https://github.com/andreeaflorescu)
+- [Laura Loghin](https://github.com/lauralt)
+- and the rust-vmm bot account
+
 On an `aarch64` platform:
 
 ```bash
