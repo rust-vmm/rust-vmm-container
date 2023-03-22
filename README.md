@@ -1,13 +1,13 @@
 # rust-vmm-container
 
 **`rustvmm/dev`** is a container with all dependencies used for running
-`rust-vmm` integration and performance tests.
-
-The container is available on Docker Hub and has support for `x86_64` and
-`aarch64` platforms.
+`rust-vmm` integration and performance tests. The container is available on
+Docker Hub and has support for `x86_64` and `aarch64` platforms.
 
 For the latest available tag, please check the `rustvmm/dev` builds available
 on [Docker Hub](https://hub.docker.com/r/rustvmm/dev/tags).
+
+## Know Issues
 
 For now rust is installed only for the root user.
 
