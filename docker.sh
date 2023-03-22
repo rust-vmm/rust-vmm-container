@@ -20,6 +20,10 @@ next_version() {
     echo "$new_version"
 }
 
+print_next_version() {
+  echo "rustvmm/dev:v$(next_version)"
+}
+
 # Builds the tag for the newest versions. It needs the last published version number.
 # Returns a valid docker tag.
 build_tag(){
@@ -72,7 +76,7 @@ case $1 in
     manifest;
     ;;
   "print-next-version")
-    next_version;
+    print_next_version;
     ;;
   *)
    echo "Command $1 not supported. Try with 'publish', 'build', 'manifest' or 'print-next-version'. ";
