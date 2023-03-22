@@ -3,10 +3,10 @@ name: Docker
 on:
   push:
     branches: [ "main" ]
-    paths: [Dockerfile, .github/workflows/docker-publish.yml]
+    paths: [Dockerfile, .github/workflows/docker-publish.yml, build_container.sh]
   pull_request:
     branches: [ "main" ]
-    paths: [Dockerfile, .github/workflows/docker-publish.yml]
+    paths: [Dockerfile, .github/workflows/docker-publish.yml, build_container.sh]
 
 jobs:
   build:
