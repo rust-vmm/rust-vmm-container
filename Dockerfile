@@ -1,5 +1,5 @@
 FROM ubuntu:22.04
-ARG RUST_TOOLCHAIN="1.67.1"
+ARG RUST_TOOLCHAIN="1.68.2"
 
 # Adding rust binaries to PATH.
 ENV PATH="$PATH:/root/.cargo/bin"
