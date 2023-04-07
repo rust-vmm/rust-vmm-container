@@ -21,7 +21,11 @@ pip3 install --no-cache-dir pytest pexpect boto3 pytest-timeout && apt purge -y 
 curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOLCHAIN"
 
 # Install cargo tools.
-cargo install cargo-kcov critcmp cargo-audit cargo-fuzz && rm -rf /root/.cargo/registry/
+# Use `git` executable to avoid OOM on arm64:
+# https://github.com/rust-lang/cargo/issues/10583#issuecomment-1129997984
+cargo --config "net.git-fetch-with-cli = true" \
+    install cargo-kcov critcmp cargo-audit cargo-fuzz
+rm -rf /root/.cargo/registry/
 
 # Install nightly (needed for fuzzing)
 rustup install --profile=minimal nightly
