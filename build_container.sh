@@ -29,7 +29,7 @@ rm -rf /root/.cargo/registry/
 
 # Install nightly (needed for fuzzing)
 rustup install --profile=minimal nightly
-rustup component add miri --toolchain nightly
+rustup component add miri rust-src --toolchain nightly
 
 # Install other rust targets.
 rustup target add $(uname -m)-unknown-linux-musl
