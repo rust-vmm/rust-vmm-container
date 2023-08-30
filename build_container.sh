@@ -24,18 +24,18 @@ curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOLCHAI
 # Use `git` executable to avoid OOM on arm64:
 # https://github.com/rust-lang/cargo/issues/10583#issuecomment-1129997984
 cargo --config "net.git-fetch-with-cli = true" \
-    install cargo-kcov critcmp cargo-audit cargo-fuzz
+    install critcmp cargo-audit cargo-fuzz
 rm -rf /root/.cargo/registry/
 
 # Install nightly (needed for fuzzing)
 rustup install --profile=minimal nightly
 rustup component add miri rust-src --toolchain nightly
+rustup component add llvm-tools-preview  # needed for coverage
 
 # Install other rust targets.
 rustup target add $(uname -m)-unknown-linux-musl
 
-# Install kcov.
-cargo kcov --print-install-kcov-sh | sh
+cargo install cargo-llvm-cov
 
 # Install libgpiod (required by vhost-device crate)
 pushd /opt
