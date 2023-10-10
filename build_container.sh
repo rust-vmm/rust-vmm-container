@@ -39,8 +39,14 @@ cargo install cargo-llvm-cov
 
 # Install libgpiod (required by vhost-device crate)
 pushd /opt
-git clone --depth 1 --branch v2.0 https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
+mkdir libgpiod
 pushd libgpiod
+git init
+git remote add origin https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
+# bindings: rust: libgpiod: release 0.2.0
+LIBGPIOD_COMMIT="e7b02c2259d97c77107c77b68e3bc1664e6703c1"
+git fetch --depth=1 origin "$COMMIT"
+git reset --hard FETCH_HEAD
 ./autogen.sh --prefix=/usr && make && make install
 popd
 rm -rf libgpiod
