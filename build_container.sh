@@ -10,7 +10,8 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     libdw-dev binutils-dev libiberty-dev make \
     cpio bc flex bison wget xz-utils fakeroot \
     autoconf autoconf-archive automake libtool \
-    libclang-dev iproute2
+    libclang-dev iproute2 \
+    libasound2 libasound2-dev
 
 # cleanup
 apt-get clean && rm -rf /var/lib/apt/lists/*
