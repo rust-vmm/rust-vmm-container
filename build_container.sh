@@ -18,7 +18,9 @@ apt-get clean && rm -rf /var/lib/apt/lists/*
 pip3 install --no-cache-dir pytest pexpect boto3 pytest-timeout && apt purge -y python3-pip
 
 # Install rustup and a fixed version of Rust.
-curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain "$RUST_TOOLCHAIN"
+curl https://sh.rustup.rs -sSf | sh -s -- \
+  -y --default-toolchain "$RUST_TOOLCHAIN" \
+  --profile minimal --component clippy,rustfmt
 
 # Install cargo tools.
 # Use `git` executable to avoid OOM on arm64:
