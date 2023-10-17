@@ -11,7 +11,11 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     cpio bc flex bison wget xz-utils fakeroot \
     autoconf autoconf-archive automake libtool \
     libclang-dev iproute2 \
-    libasound2 libasound2-dev
+    libasound2 libasound2-dev \
+    debhelper-compat findutils libavcodec-dev libavfilter-dev libavformat-dev \
+    libdbus-1-dev libbluetooth-dev libglib2.0-dev libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev libsbc-dev libsdl2-dev libudev-dev \
+    libva-dev libv4l-dev libx11-dev meson ninja-build python3-docutils systemd
 
 # cleanup
 apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -40,11 +44,21 @@ rustup target add $(uname -m)-unknown-linux-musl
 
 cargo install cargo-llvm-cov
 
-# Install libgpiod (required by vhost-device crate)
+# Install libgpiod and libpipewire (required by vhost-device crate)
 pushd /opt
 git clone --depth 1 --branch v2.0 https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
 pushd libgpiod
 ./autogen.sh --prefix=/usr && make && make install
 popd
 rm -rf libgpiod
+wget https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/0.3.71/pipewire-0.3.71.tar.gz
+tar xzvf pipewire-0.3.71.tar.gz
+pushd pipewire-0.3.71
+meson setup builddir && \
+meson configure builddir -Dprefix=/usr && \
+meson compile -C builddir && \
+meson install -C builddir
+popd
+rm -rf pipewire-0.3.71
+rm pipewire-0.3.71.tar.gz
 popd
