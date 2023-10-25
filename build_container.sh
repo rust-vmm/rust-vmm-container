@@ -12,7 +12,7 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     autoconf autoconf-archive automake libtool \
     libclang-dev iproute2 \
     libasound2 libasound2-dev \
-    debhelper-compat libdbus-1-dev libglib2.0-dev meson ninja-build
+    debhelper-compat libdbus-1-dev libglib2.0-dev meson ninja-build dbus
 
 # cleanup
 apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -60,3 +60,6 @@ popd
 rm -rf pipewire-0.3.71
 rm pipewire-0.3.71.tar.gz
 popd
+
+# dbus-daemon expects this folder
+mkdir /run/dbus
