@@ -12,10 +12,7 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     autoconf autoconf-archive automake libtool \
     libclang-dev iproute2 \
     libasound2 libasound2-dev \
-    debhelper-compat findutils libavcodec-dev libavfilter-dev libavformat-dev \
-    libdbus-1-dev libbluetooth-dev libglib2.0-dev libgstreamer1.0-dev \
-    libgstreamer-plugins-base1.0-dev libsbc-dev libsdl2-dev libudev-dev \
-    libva-dev libv4l-dev libx11-dev meson ninja-build python3-docutils systemd
+    debhelper-compat libdbus-1-dev libglib2.0-dev meson ninja-build
 
 # cleanup
 apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -54,8 +51,9 @@ rm -rf libgpiod
 wget https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/0.3.71/pipewire-0.3.71.tar.gz
 tar xzvf pipewire-0.3.71.tar.gz
 pushd pipewire-0.3.71
-meson setup builddir && \
-meson configure builddir -Dprefix=/usr && \
+meson setup builddir --prefix="/usr" -Dbuildtype=release \
+    -Dauto_features=disabled -Ddocs=disabled -Dtests=disabled \
+    -Dexamples=disabled -Dinstalled_tests=disabled -Dsession-managers=[] && \
 meson compile -C builddir && \
 meson install -C builddir
 popd
