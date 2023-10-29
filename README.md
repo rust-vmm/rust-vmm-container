@@ -2,14 +2,27 @@
 
 **`rustvmm/dev`** is a container with all dependencies used for running
 `rust-vmm` integration and performance tests. The container is available on
-Docker Hub and has support for `x86_64` and `aarch64` platforms.
+Docker Hub and has support for `x86_64` and `aarch64` platforms.  
+`riscv64` CI is also supported but using [workaround explained here](#workaround-for-supporting-risc-v-ci).  
 
-For the latest available tag, please check the `rustvmm/dev` builds available
-on [Docker Hub](https://hub.docker.com/r/rustvmm/dev/tags).
+Due to the workaround, we have two separate Docker Hub repositories:
+- For the latest available tag for `x86_64` and `aarch64`, 
+please check the `rustvmm/dev` builds available on 
+[Docker Hub](https://hub.docker.com/r/rustvmm/dev/tags).  
+- For the latest available tag for `riscv64`, 
+please check the `rustvmm/dev_riscv64` builds available on 
+[Docker Hub](https://hub.docker.com/r/rustvmm/dev_riscv64/tags).
 
 ## Know Issues
 
 For now rust is installed only for the root user.
+
+### Workaround for supporting RISC-V CI
+Unlike x86/ARM CI, currently there is no RISC-V Buildkite agent platform.  
+As a workaround, QEMU is used to run RISC-V CI on x86 Buildkite agent platform.  
+As a result,
+- a dedicated `Dockerfile.riscv64` is used to build such container image containing QEMU along with cross-compiled OpenSBI, Linux, and rootfs.
+- a dedicated [Docker Hub repository](https://hub.docker.com/r/rustvmm/dev_riscv64/tags) `rustvmm/dev_riscv64` is used to store such container image.
 
 ## Using the Container
 
@@ -32,6 +45,8 @@ Example of running cargo build on the kvm-ioctls crate:
    Compiling kvm-ioctls v0.0.1 (/kvm-ioctls)
     Finished release [optimized] target(s) in 5.63s
 ```
+
+Examples of running cargo build/test for riscv64 can be found in [riscv64/examples/docker-test.sh](`riscv64/examples/docker-test.sh`).
 
 ## Publishing a New Version
 
@@ -58,6 +73,7 @@ that are allowed to publish containers:
 - [Laura Loghin](https://github.com/lauralt)
 - and the rust-vmm bot account
 
+#### Manual Publish for `x86_64` and `aarch64`
 On an `aarch64` platform:
 
 ```bash
@@ -83,3 +99,14 @@ fail with: ```docker manifest is only supported when experimental cli features
 are enabled```. Checkout
 [this article](https://medium.com/@mauridb/docker-multi-architecture-images-365a44c26be6)
 to understand why and how to fix it.
+
+#### Manual Publish for `riscv64`
+For `riscv64` CI container image, the above steps are a little bit different due to the [workaround](#workaround-for-supporting-risc-v-ci) needed to support `riscv64` CI:
+- `ARCH=riscv64` needs to be specified because `riscv64` has dedicated Dockerfile.riscv64 and Docker Hub repository.
+- The commands are run on x86 platform because the container image is to be run on x86 Buildkite agent platform.
+```bash
+> cd rust-vmm-container
+> ARCH=riscv64 ./docker.sh build
+> ARCH=riscv64 ./docker.sh publish
+> ARCH=riscv64 ./docker.sh manifest
+```
