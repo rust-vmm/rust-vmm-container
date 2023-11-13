@@ -37,7 +37,7 @@ rustup component add miri rust-src --toolchain nightly
 rustup component add llvm-tools-preview  # needed for coverage
 
 # Install other rust targets.
-rustup target add $(uname -m)-unknown-linux-musl
+rustup target add $(uname -m)-unknown-linux-musl $(uname -m)-unknown-none
 
 cargo install cargo-llvm-cov
 
