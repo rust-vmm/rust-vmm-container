@@ -1,73 +1,20 @@
 #==============================
-# Binaries Builder
+# Builder Stage
+# Cross-compile QEMU, OpenSBI, Linux
 #==============================
 FROM ubuntu:22.04 AS builder
-ARG ARCH=riscv
-ARG CROSS_COMPILE=riscv64-linux-gnu-
 
-#--------------------
-# Version tag
-#--------------------
-ARG QEMU_TAG=v8.1.2
-ARG OPENSBI_TAG=v1.3.1
-ARG LINUX_TAG=v6.5
-
-#--------------------
-# Directory paths
-#--------------------
-## Directory path where git clones repos to
-ARG DIR_PREFIX=/opt/build
-## Build output path (to store output of make)
-ARG OUTPUT_DIR=/opt/bin
-RUN mkdir -p $OUTPUT_DIR
-## Build install path (to store output of make install)
-ARG INSTALL_DIR=/opt/install
-
-## Repo paths
-ARG QEMU_DIR=$DIR_PREFIX/qemu
-ARG OPENSBI_DIR=$DIR_PREFIX/opensbi
-ARG LINUX_DIR=$DIR_PREFIX/linux
-
-#--------------------
-# Prerequisites
-#--------------------
-RUN apt update
-RUN apt -y install git python3 python3-pip build-essential pkg-config libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev ninja-build gcc-riscv64-linux-gnu libssl-dev wget curl bc flex bison libslirp-dev
-
-WORKDIR $DIR_PREFIX
-RUN git clone --depth 1 --branch $QEMU_TAG https://gitlab.com/qemu-project/qemu.git
-RUN git clone --depth 1 --branch $OPENSBI_TAG https://github.com/riscv-software-src/opensbi.git
-RUN git clone --depth 1 --branch $LINUX_TAG https://github.com/torvalds/linux.git
-
-#--------------------
-# QEMU
-#--------------------
-WORKDIR $QEMU_DIR
-RUN ./configure --target-list="riscv64-softmmu" --enable-slirp --prefix=$INSTALL_DIR/usr/local && \
-	make -j$(nproc) && \
-	make install
-
-#--------------------
-# OpenSBI
-#--------------------
-WORKDIR $OPENSBI_DIR
-RUN make -j$(nproc) PLATFORM=generic
-RUN mv $OPENSBI_DIR/build/platform/generic/firmware/fw_jump.elf $OUTPUT_DIR
-
-#--------------------
-# Linux
-#--------------------
-WORKDIR $LINUX_DIR
-RUN sed -i "s|^CONFIG_KVM=.*|CONFIG_KVM=y|g" $LINUX_DIR/arch/riscv/configs/defconfig
-RUN make defconfig && make -j$(nproc)
-RUN mv $LINUX_DIR/arch/riscv/boot/Image $OUTPUT_DIR
+COPY build_container_riscv64.builder.sh /opt/src/scripts/build_container_riscv64.builder.sh
+RUN /opt/src/scripts/build_container_riscv64.builder.sh
 
 #==============================
-# Root Filesystem
+# Rootfs Stage
+# Generate guest rootfs
 #==============================
-FROM riscv64/ubuntu:22.04 AS rootfs_builder
-RUN apt update && apt upgrade -y
-RUN apt install -y systemd init ifupdown busybox udev
+FROM --platform=linux/riscv64 riscv64/ubuntu:22.04 AS rootfs_builder
+
+COPY build_container_riscv64.rootfs.sh /opt/src/scripts/build_container_riscv64.rootfs.sh
+RUN /opt/src/scripts/build_container_riscv64.rootfs.sh
 
 ## Install test service that run CI test on systemd boot
 COPY riscv64/test.service /etc/systemd/system/
@@ -83,10 +30,8 @@ COPY riscv64/resolv.conf /etc/
 #==============================
 FROM ubuntu:22.04 AS final
 
-#--------------------
-# Version tag
-#--------------------
-ARG RUST_TOOLCHAIN="1.72.0"
+COPY build_container_riscv64.final.sh /opt/src/scripts/build_container_riscv64.final.sh
+RUN /opt/src/scripts/build_container_riscv64.final.sh
 
 #--------------------
 # Directories to be installed from builder and rootfs_builder
@@ -94,18 +39,6 @@ ARG RUST_TOOLCHAIN="1.72.0"
 ARG OUTPUT_DIR=/opt/bin
 ARG INSTALL_DIR=/opt/install
 ARG ROOTFS_DIR=/rootfs
-ENV PATH="$PATH:/root/.cargo/bin:$INSTALL_DIR/usr/local/bin"
-
-#--------------------
-# Prerequisites
-#--------------------
-RUN apt update
-RUN apt install -y curl libglib2.0-dev libfdt-dev libpixman-1-dev libslirp-dev gcc gcc-riscv64-linux-gnu
-
-RUN curl https://sh.rustup.rs -sSf | sh -s -- \
-	    -y --default-toolchain "$RUST_TOOLCHAIN" \
-	    --profile minimal --component clippy,rustfmt
-RUN rustup target add riscv64gc-unknown-linux-gnu
 
 #--------------------
 # Combining all stages
@@ -116,3 +49,6 @@ COPY --from=rootfs_builder / $ROOTFS_DIR
 
 ## Install script for starting QEMU RISC-V guest
 COPY riscv64/qemu.sh /bin/
+
+## rust path and qemu path
+ENV PATH="$PATH:/root/.cargo/bin:$INSTALL_DIR/usr/local/bin"
