@@ -17,6 +17,12 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
 # cleanup
 apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# help musl-gcc find linux headers
+cd /usr/include/$ARCH-linux-musl \
+    && ln -s ../$ARCH-linux-gnu/asm asm \
+    && ln -s ../linux linux \
+    && ln -s ../asm-generic asm-generic
+
 pip3 install --no-cache-dir pytest pexpect boto3 pytest-timeout && apt purge -y python3-pip
 
 # Install rustup and a fixed version of Rust.
