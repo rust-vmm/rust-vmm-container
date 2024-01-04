@@ -40,7 +40,7 @@ build(){
   docker build -t "$new_tag" \
         --build-arg GIT_BRANCH="${GIT_BRANCH}" \
         --build-arg GIT_COMMIT="${GIT_COMMIT}" \
-        -f Dockerfile .
+        -f Dockerfile --build-arg ARCH="${ARCH}" .
   echo "Build completed for $new_tag"
 }
 
