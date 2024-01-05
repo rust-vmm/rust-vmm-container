@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -ex
 
+ARCH=$(uname -m)
+
 apt-get update
 
 # DEBIAN_FRONTEND is set for tzdata.
@@ -18,8 +20,8 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
 apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # help musl-gcc find linux headers
-pushd /usr/include/$(uname -m)-linux-musl 
-ln -s ../$(uname -m)-linux-gnu/asm asm 
+pushd /usr/include/$ARCH-linux-musl 
+ln -s ../$ARCH-linux-gnu/asm asm 
 ln -s ../linux linux 
 ln -s ../asm-generic asm-generic
 popd
@@ -44,7 +46,7 @@ rustup component add miri rust-src --toolchain nightly
 rustup component add llvm-tools-preview  # needed for coverage
 
 # Install other rust targets.
-rustup target add $(uname -m)-unknown-linux-musl $(uname -m)-unknown-none
+rustup target add $ARCH-unknown-linux-musl $ARCH-unknown-none
 
 cargo install cargo-llvm-cov
 
