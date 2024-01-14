@@ -2,10 +2,14 @@
 
 **`rustvmm/dev`** is a container with all dependencies used for running
 `rust-vmm` integration and performance tests. The container is available on
-Docker Hub and has support for `x86_64` and `aarch64` platforms.
+Docker Hub and has support for `x86_64`, `aarch64`, and `riscv64` platforms.
 
-For the latest available tag, please check the `rustvmm/dev` builds available
-on [Docker Hub](https://hub.docker.com/r/rustvmm/dev/tags).
+For the latest available tag for `x86_64` and `aarch64`, 
+please check the `rustvmm/dev` builds available on 
+[Docker Hub](https://hub.docker.com/r/rustvmm/dev/tags).
+For the latest available tag for `riscv64`, 
+please check the `rustvmm/dev_riscv64` builds available on 
+[this Docker Hub](https://hub.docker.com/r/rustvmm/dev_riscv64/tags).
 
 ## Know Issues
 
@@ -32,6 +36,8 @@ Example of running cargo build on the kvm-ioctls crate:
    Compiling kvm-ioctls v0.0.1 (/kvm-ioctls)
     Finished release [optimized] target(s) in 5.63s
 ```
+
+Examples of running cargo build/test for riscv64 can be found in [riscv64/examples](`riscv64/examples`).
 
 ## Publishing a New Version
 
@@ -83,3 +89,13 @@ fail with: ```docker manifest is only supported when experimental cli features
 are enabled```. Checkout
 [this article](https://medium.com/@mauridb/docker-multi-architecture-images-365a44c26be6)
 to understand why and how to fix it.
+
+The above steps is a little bit different for `riscv64` platform:  
+`ARCH` needs to be set since `riscv64` has dedicated Dockerfile.riscv64 and Docker repository:
+
+```bash
+> cd rust-vmm-container
+> ARCH=riscv64 ./docker.sh build
+> ARCH=riscv64 ./docker.sh publish
+> ARCH=riscv64 ./docker.sh manifest
+```
