@@ -14,6 +14,7 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     autoconf autoconf-archive automake libtool \
     libclang-dev iproute2 \
     libasound2 libasound2-dev \
+    libepoxy0 libepoxy-dev \
     debhelper-compat libdbus-1-dev libglib2.0-dev meson ninja-build dbus
 
 # cleanup
