@@ -14,7 +14,15 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     autoconf autoconf-archive automake libtool \
     libclang-dev iproute2 \
     libasound2 libasound2-dev \
-    debhelper-compat libdbus-1-dev libglib2.0-dev meson ninja-build dbus
+    debhelper-compat libdbus-1-dev libglib2.0-dev meson ninja-build dbus \
+
+# Needed for x86_64 to cross compile RISC-V code
+if [ "$ARCH" = "x86_64" ]; then
+DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
+    autotools-dev libmpc-dev libmpfr-dev libgmp-dev gawk build-essential \
+    texinfo gperf patchutils zlib1g-dev libexpat-dev libslirp-dev \
+    qemu-user-static
+fi
 
 # cleanup
 apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -47,6 +55,8 @@ rustup component add llvm-tools-preview  # needed for coverage
 
 # Install other rust targets.
 rustup target add $ARCH-unknown-linux-musl $ARCH-unknown-none
+# For riscv64 cross-compilation
+rustup target add riscv64gc-unknown-linux-gnu
 
 cargo install cargo-llvm-cov
 
@@ -69,6 +79,19 @@ popd
 rm -rf pipewire-0.3.71
 rm pipewire-0.3.71.tar.gz
 popd
+
+# Install RISC-V GNU Compiler Toolchain for riscv cross-compilation
+if [ "$ARCH" = "x86_64" ]; then
+pushd /opt
+git clone https://github.com/riscv/riscv-gnu-toolchain
+pushd riscv-gnu-toolchain
+mkdir /opt/riscv
+./configure --prefix=/opt/riscv
+make linux
+popd
+rm -rf riscv-gnu-toolchain
+popd
+fi
 
 # dbus-daemon expects this folder
 mkdir /run/dbus
