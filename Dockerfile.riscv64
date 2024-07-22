@@ -1,0 +1,11 @@
+# This Dockerfile is a temporory solution for enabling RISC-V CIs, and is
+# expected to be remove when an Ubuntu LTS image is available on `riscv64`
+# platform.
+FROM ubuntu:24.10
+ARG RUST_TOOLCHAIN="1.75.0"
+
+# Adding rust binaries to PATH.
+ENV PATH="$PATH:/root/.cargo/bin"
+
+COPY build_container_riscv.sh /opt/src/scripts/build_container.sh
+RUN /opt/src/scripts/build_container.sh

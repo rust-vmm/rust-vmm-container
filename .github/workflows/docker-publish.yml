@@ -68,6 +68,20 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # Build and push riscv64 Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push riscv64 Docker image
+        id: build-and-push-riscv64
+        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
+        with:
+          context: .
+          file: Dockerfile.riscv64
+          push: ${{ github.event_name != 'pull_request' }}
+          platforms: linux/riscv64
+          tags: ${{ env.VERSION }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
@@ -80,4 +94,6 @@ jobs:
           COSIGN_EXPERIMENTAL: "true"
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
-        run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
+        run: | 
+          echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
+          echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push-riscv64.outputs.digest }}
