@@ -49,8 +49,9 @@ jobs:
         # NOTE: The tag contains the full docker container name + tag as it is requested
         # by the build-and-push step.
         run: |
-          echo "VERSION=$(./docker.sh print-next-version)" >> $GITHUB_ENV
-          echo "Next version to be published is: ${{ env.VERSION }}"
+          NEXT_VERSION=$(./docker.sh print-next-version)
+          echo "VERSION=${NEXT_VERSION}" >> $GITHUB_ENV
+          echo "Next version to be published is: ${NEXT_VERSION}"
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
