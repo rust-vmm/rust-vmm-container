@@ -1,0 +1,54 @@
+#==============================
+# Builder Stage
+# Compile QEMU, cross-compile OpenSBI, Linux
+#==============================
+FROM ubuntu:22.04 AS builder
+
+COPY build_container_riscv64.builder.sh /opt/src/scripts/build_container_riscv64.builder.sh
+RUN /opt/src/scripts/build_container_riscv64.builder.sh
+
+#==============================
+# Rootfs Stage
+# Generate guest rootfs
+#==============================
+FROM --platform=linux/riscv64 riscv64/ubuntu:22.04 AS rootfs_builder
+
+COPY build_container_riscv64.rootfs.sh /opt/src/scripts/build_container_riscv64.rootfs.sh
+RUN /opt/src/scripts/build_container_riscv64.rootfs.sh
+
+## Install test service that run CI test on systemd boot
+COPY riscv64/test.service /etc/systemd/system/
+COPY riscv64/test-service.sh /bin/
+RUN systemctl enable test
+
+## Install network-related configurations
+COPY riscv64/interfaces /etc/network/
+COPY riscv64/resolv.conf /etc/
+
+#==============================
+# Final-Stage Docker Image
+#==============================
+FROM ubuntu:22.04 AS final
+
+COPY build_container_riscv64.final.sh /opt/src/scripts/build_container_riscv64.final.sh
+RUN /opt/src/scripts/build_container_riscv64.final.sh
+
+#--------------------
+# Directories to be installed from builder and rootfs_builder
+#--------------------
+ARG OUTPUT_DIR=/opt/bin
+ARG INSTALL_DIR=/opt/install
+ARG ROOTFS_DIR=/rootfs
+
+#--------------------
+# Combining all stages
+#--------------------
+COPY --from=builder $OUTPUT_DIR $OUTPUT_DIR
+COPY --from=builder $INSTALL_DIR $INSTALL_DIR
+COPY --from=rootfs_builder / $ROOTFS_DIR
+
+## Install script for starting QEMU RISC-V guest
+COPY riscv64/qemu.sh /bin/
+
+## rust path and qemu path
+ENV PATH="$PATH:/root/.cargo/bin:$INSTALL_DIR/usr/local/bin"
