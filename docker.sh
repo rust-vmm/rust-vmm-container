@@ -52,7 +52,8 @@ manifest(){
   docker manifest create \
         $new_tag \
         "${new_tag}_x86_64" \
-        "${new_tag}_aarch64"
+        "${new_tag}_aarch64" \
+        "${new_tag}_riscv64"
   echo "Manifest successfully created"
   docker manifest push $new_tag
   echo "Manifest successfully pushed on DockerHub: ${DOCKERHUB_LINK}"
