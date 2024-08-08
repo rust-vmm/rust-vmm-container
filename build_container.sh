@@ -18,8 +18,8 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     libasound2 libasound2-dev \
     libepoxy0 libepoxy-dev \
     libdrm2 libdrm-dev \
+    libgbm1 libgbm-dev libgles2 \
     libglm-dev libstb-dev libc6-dev \
-    libvirglrenderer-dev libvirglrenderer1 \
     debhelper-compat libdbus-1-dev libglib2.0-dev meson ninja-build dbus
 
 # cleanup
@@ -56,7 +56,7 @@ rustup target add $ARCH-unknown-linux-musl $ARCH-unknown-none
 
 cargo install cargo-llvm-cov
 
-# Install aemu, gfxstream, libgpiod and libpipewire (required by vhost-device crate)
+# Install aemu, gfxstream, libgpiod, libpipewire and libvirglrenderer (required by vhost-device crate)
 pushd /opt
 git clone https://android.googlesource.com/platform/hardware/google/aemu
 pushd aemu
@@ -91,6 +91,14 @@ meson install -C builddir
 popd
 rm -rf pipewire-0.3.71
 rm pipewire-0.3.71.tar.gz
+git clone https://gitlab.freedesktop.org/virgl/virglrenderer.git
+pushd virglrenderer
+git checkout virglrenderer-1.0.1
+meson setup build
+ninja -C build
+ninja -C build install
+popd
+rm -rf virglrenderer
 popd
 
 # dbus-daemon expects this folder
