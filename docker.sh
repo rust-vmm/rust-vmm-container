@@ -7,11 +7,12 @@ DOCKER_TAG=rustvmm/dev
 
 # Get the latest published version. Returns a number.
 # If latest is v100, returns 100.
+# If latest for riscv64 is v100-riscv, returns 100.
 # This works as long as we have less than 100 tags because we set the page size to 100,
 # once we have more than that this script needs to be updated.
 latest(){
   curl -L -s 'https://registry.hub.docker.com/v2/repositories/rustvmm/dev/tags?page_size=100'| \
-    jq '."results"[]["name"]' |  sed 's/"//g' | cut -c 2- | grep -E "^[0-9]+$" | sort -n | tail -1
+    jq '."results"[]["name"]' |  sed 's/"//g' | cut -c 2- | grep -E "^[0-9]+" | sort -n | tail -1
 }
 
 next_version() {
