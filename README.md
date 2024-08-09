@@ -33,6 +33,37 @@ Example of running cargo build on the kvm-ioctls crate:
     Finished release [optimized] target(s) in 5.63s
 ```
 
+## Testing Changes locally with the Container Image
+
+When we modify the container to install new dependencies, we may need to 
+test the new dependencies locally, before publishing the PR.
+To do this, first build the rust-vmm container locally by running the commands
+
+```bash
+> cd rust-vmm-container
+> ./docker.sh build
+```
+
+since this command will build a new docker image with tag latest version + 1
+and will alias it with "latest" tag, when testing the container check the output
+of the `./docker.sh build` command and you will see the tag that will be published
+with your PR to be sure that the changes introduced by your PR to the CI works
+correctly before pusing it upstream.
+Example of this output is `Build completed for rustvmm/dev:v38_x86_64`
+
+Example of how to test the container on your localhost with tag v38_x86_64:
+
+```bash
+> docker run --device=/dev/kvm -it --rm \
+--volume $(pwd):/path/to/workdir --workdir /path/to/workdir \
+--privileged rustvmm/dev:v38_x86_64
+```
+The `--workdir /workdir` option ensures that when the container starts,
+the working directory inside the container is set to `/workdir`
+Since you've mounted the host's current directory ($(pwd)) to `/workdir` in
+the container, any files in the current working directory on the host will be
+accessible in the `/workdir` directory inside the container.
+
 ## Publishing a New Version
 
 A new container version is published for each PR merged to main that adds
