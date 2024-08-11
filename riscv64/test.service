@@ -1,0 +1,12 @@
+[Unit]
+Description=Test Service
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/bin/test-service.sh
+StandardOutput=tty
+TTYPath=/dev/ttyS0
+
+[Install]
+WantedBy=multi-user.target
