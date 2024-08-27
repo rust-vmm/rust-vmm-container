@@ -2,7 +2,7 @@
 
 **`rustvmm/dev`** is a container with all dependencies used for running
 `rust-vmm` integration and performance tests. The container is available on
-Docker Hub and has support for `x86_64` and `aarch64` platforms.
+Docker Hub and has support for `x86_64`, `aarch64` and `riscv64`  platforms.
 
 For the latest available tag, please check the `rustvmm/dev` builds available
 on [Docker Hub](https://hub.docker.com/r/rustvmm/dev/tags).
