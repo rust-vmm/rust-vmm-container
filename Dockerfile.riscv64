@@ -1,0 +1,55 @@
+# Compile QEMU 9.0.2
+# ---------------------------------------------------------
+FROM ubuntu:22.04 AS qemu_builder
+
+COPY riscv64/build_qemu_system_riscv64.sh /opt/src/scripts/build.sh
+RUN /opt/src/scripts/build.sh
+
+# Compile kernel 6.10 since we need AIA drivers
+# ---------------------------------------------------------
+FROM ubuntu:22.04 AS kernel_builder
+
+COPY riscv64/build_kernel.sh /opt/src/scripts/build.sh
+RUN /opt/src/scripts/build.sh
+
+# Compile OpenSBI
+# ---------------------------------------------------------
+FROM ubuntu:22.04 AS opensbi_builder
+
+COPY riscv64/build_opensbi.sh /opt/src/scripts/build.sh
+RUN /opt/src/scripts/build.sh
+
+# Build rootfs with sshd and Rust related packages ready
+# ---------------------------------------------------------
+FROM --platform=linux/riscv64 riscv64/ubuntu:22.04 AS rootfs_builder
+
+ARG RUST_TOOLCHAIN="1.75.0"
+ENV PATH="$PATH:/root/.cargo/bin"
+COPY build_container.sh /opt/src/scripts/build.sh
+RUN /opt/src/scripts/build.sh
+
+# Finalize
+# ---------------------------------------------------------
+FROM ubuntu:22.04 AS final
+
+ARG OUTPUT=/output
+ARG QEMU_DIR=/opt/qemu
+ARG KERNEL_DIR=/opt/kernel
+ARG OPENSBI_DIR=/opt/opensbi
+ARG ROOTFS_DIR=/opt/rootfs
+
+COPY --from=qemu_builder $OUTPUT $QEMU_DIR
+COPY --from=kernel_builder $OUTPUT $KERNEL_DIR
+COPY --from=opensbi_builder $OUTPUT $OPENSBI_DIR
+COPY --from=rootfs_builder / $ROOTFS_DIR
+
+COPY riscv64/build_finalize.sh /opt/src/scripts/finalize.sh
+RUN /opt/src/scripts/finalize.sh
+
+ENV QEMU_DIR=$QEMU_DIR KERNEL_DIR=$KERNEL_DIR \
+    OPENSBI_DIR=$OPENSBI_DIR ROOTFS_DIR=$ROOTFS_DIR \
+    WORKDIR=/workdir
+
+# Start qemu-system-riscv64 as a background process
+COPY riscv64/start_in_qemu.sh /opt/src/scripts/start.sh
+ENTRYPOINT ["/opt/src/scripts/start.sh"]
