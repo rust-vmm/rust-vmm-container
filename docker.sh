@@ -3,7 +3,8 @@ set -e
 ARCH=$(uname -m)
 GIT_COMMIT=$(git rev-parse HEAD)
 GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-DOCKER_TAG=rustvmm/dev
+IMAGE_NAME=rustvmm/dev
+REGISTRY=index.docker.io
 
 # Get the latest published version. Returns a number.
 # If latest is v100, returns 100.
@@ -25,11 +26,19 @@ print_next_version() {
   echo "rustvmm/dev:v$(next_version)"
 }
 
+print_registry() {
+  echo ${REGISTRY}
+}
+
+print_image_name() {
+  echo ${IMAGE_NAME}
+}
+
 # Builds the tag for the newest versions. It needs the last published version number.
 # Returns a valid docker tag.
 build_tag(){
   new_version=$(next_version)
-  new_tag=${DOCKER_TAG}:v${new_version}_$ARCH
+  new_tag=${IMAGE_NAME}:v${new_version}_$ARCH
   echo "$new_tag"
 }
 
@@ -49,7 +58,7 @@ build(){
 manifest(){
   latest_version=$(latest)
   new_version=$((latest_version + 1))
-  new_tag=${DOCKER_TAG}:v${new_version}
+  new_tag=${IMAGE_NAME}:v${new_version}
   docker manifest create \
         $new_tag \
         "${new_tag}_x86_64" \
@@ -75,6 +84,12 @@ case $1 in
     ;;
   "manifest")
     manifest;
+    ;;
+  "print-registry")
+    print_registry;
+    ;;
+  "print-image-name")
+    print_image_name;
     ;;
   "print-next-version")
     print_next_version;

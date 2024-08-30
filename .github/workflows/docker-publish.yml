@@ -42,10 +42,18 @@ jobs:
           username: ${{ secrets.DOCKER_ACCOUNT_ID }}
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
-      - name: Generate next docker tag
+      - name: Generate metadata for Docker
         # NOTE: The tag contains the full docker container name + tag as it is requested
         # by the build-and-push step.
         run: |
+          REGISTRY=$(./docker.sh print-registry)
+          echo "REGISTRY=${REGISTRY}" >> $GITHUB_ENV
+          echo "Registry to be published is: ${REGISTRY}"
+
+          IMAGE_NAME=$(./docker.sh print-image-name)
+          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
+          echo "Image name to be published is: ${IMAGE_NAME}"
+
           NEXT_VERSION=$(./docker.sh print-next-version)
           echo "VERSION=${NEXT_VERSION}" >> $GITHUB_ENV
           echo "Next version to be published is: ${NEXT_VERSION}"
@@ -68,7 +76,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions/attest-build-provenance@v1
         with:
-          subject-name: index.docker.io/${{ env.VERSION }}
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.build-and-push.outputs.digest }}
           push-to-registry: true
 
@@ -95,8 +103,16 @@ jobs:
           username: ${{ secrets.DOCKER_ACCOUNT_ID }}
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
-      - name: Generate next docker tag
+      - name: Generate metadata for Docker
         run: |
+          REGISTRY=$(./docker.sh print-registry)
+          echo "REGISTRY=${REGISTRY}" >> $GITHUB_ENV
+          echo "Registry to be published is: ${REGISTRY}"
+
+          IMAGE_NAME=$(./docker.sh print-image-name)
+          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
+          echo "Image name to be published is: ${IMAGE_NAME}"
+
           NEXT_VERSION=$(./docker.sh print-next-version)
           echo "VERSION=${NEXT_VERSION}" >> $GITHUB_ENV
           echo "Next version to be published is: ${NEXT_VERSION}"
@@ -117,6 +133,6 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions/attest-build-provenance@v1
         with:
-          subject-name: index.docker.io/${{ env.VERSION }}-riscv
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.build-and-push-riscv.outputs.digest }}
           push-to-registry: true
