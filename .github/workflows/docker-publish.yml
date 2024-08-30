@@ -68,7 +68,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions/attest-build-provenance@v1
         with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.VERSION }}
+          subject-name: index.docker.io/${{ env.VERSION }}
           subject-digest: ${{ steps.build-and-push.outputs.digest }}
           push-to-registry: true
 
@@ -117,6 +117,6 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions/attest-build-provenance@v1
         with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.VERSION }}-riscv
+          subject-name: index.docker.io/${{ env.VERSION }}-riscv
           subject-digest: ${{ steps.build-and-push-riscv.outputs.digest }}
           push-to-registry: true
