@@ -18,5 +18,6 @@ Host riscv-qemu
     StrictHostKeyChecking no
 EOF
 
-# Set `nameserver` for `resolv.conf`
-echo 'nameserver 8.8.8.8' > $ROOTFS_DIR/etc/resolv.conf
+# Set `nameserver` to `10.0.2.3` as QEMU User Networking documented.
+# See: https://wiki.qemu.org/Documentation/Networking
+echo 'nameserver 10.0.2.3' > $ROOTFS_DIR/etc/resolv.conf
