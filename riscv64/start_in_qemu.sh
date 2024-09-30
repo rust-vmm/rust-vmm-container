@@ -29,11 +29,12 @@ cp -a $WORKDIR $ROOTFS_DIR/root
 
 HOST=riscv-qemu
 
-while ! nc -z localhost 2222; do   
-  echo "Dialing qemu-system-riscv64..."
-  sleep 1
+echo "Testing SSH connectivity to $HOST..."
+while ! ssh -o ConnectTimeout=3 $HOST exit; do
+  echo "$HOST is not ready..."
 done
 
 # Issue command
 COMMAND=$@
+echo "$HOST is ready, forwarding command: $COMMAND"
 ssh $HOST "export PATH=\"\$PATH:/root/.cargo/bin\" && cd workdir && $COMMAND"
