@@ -5,7 +5,7 @@ apt-get update
 
 DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     openssh-client libslirp-dev libfdt-dev libglib2.0-dev libssl-dev \
-    libpixman-1-dev netcat
+    libpixman-1-dev
 
 # Modify fstab to mount `tmpfs` during boot
 # See: https://wiki.qemu.org/Documentation/9p_root_fs#Let's_start_the_Installation
