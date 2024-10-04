@@ -30,7 +30,8 @@ cp -a $WORKDIR $ROOTFS_DIR/root
 HOST=riscv-qemu
 
 echo "Testing SSH connectivity to $HOST..."
-while ! ssh -o ConnectTimeout=3 $HOST exit; do
+while ! ssh -o ConnectTimeout=1 -q $HOST exit; do
+  sleep 10s
   echo "$HOST is not ready..."
 done
 
