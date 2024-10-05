@@ -2,7 +2,7 @@
 set -ex
 
 # Minimum resources needed
-MIN_CORES=3
+MIN_CORES=4
 MIN_MEM=6
 DIVISOR=5
 
