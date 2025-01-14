@@ -21,12 +21,19 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     libdrm2 libdrm-dev \
     libgbm1 libgbm-dev libgles2 \
     libglm-dev libstb-dev libc6-dev \
-    debhelper-compat libdbus-1-dev libglib2.0-dev meson ninja-build dbus
+    debhelper-compat libdbus-1-dev libglib2.0-dev meson ninja-build dbus \
+    podman
 
 # `riscv64` specific dependencies
 if [ "$ARCH" == "riscv64" ]; then
     DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
         openssh-server systemd init ifupdown busybox udev isc-dhcp-client
+fi
+
+# apt dependencies not available on `riscv64`
+if [ "$ARCH" != "riscv64" ]; then
+    DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
+        binutils-aarch64-linux-gnu
 fi
 
 # cleanup
