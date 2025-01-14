@@ -48,6 +48,7 @@ build_tag(){
 build(){
   new_tag=$(build_tag)
   docker build -t "$new_tag" \
+        --load \
         --build-arg GIT_BRANCH="${GIT_BRANCH}" \
         --build-arg GIT_COMMIT="${GIT_COMMIT}" \
         -f Dockerfile .
