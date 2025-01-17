@@ -25,7 +25,11 @@ print_image_name() {
 # Builds the tag for the newest versions. It needs the last published version number.
 # Returns a valid docker tag.
 build_tag(){
-  new_tag=$(print_next_version)_$ARCH
+  if [ "$ARCH" == "riscv64" ]; then
+    new_tag=$(print_next_version)-riscv
+  else
+    new_tag=$(print_next_version)_$ARCH
+  fi
   echo "$new_tag"
 }
 
