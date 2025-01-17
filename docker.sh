@@ -23,7 +23,7 @@ next_version() {
 }
 
 print_next_version() {
-  echo "rustvmm/dev:v$(next_version)"
+  echo "${IMAGE_NAME}:v$(next_version)"
 }
 
 print_registry() {
@@ -37,8 +37,7 @@ print_image_name() {
 # Builds the tag for the newest versions. It needs the last published version number.
 # Returns a valid docker tag.
 build_tag(){
-  new_version=$(next_version)
-  new_tag=${IMAGE_NAME}:v${new_version}_$ARCH
+  new_tag=$(print_next_version)_$ARCH
   echo "$new_tag"
 }
 
@@ -57,9 +56,7 @@ build(){
 
 # Creates and pushes a manifest for a new version
 manifest(){
-  latest_version=$(latest)
-  new_version=$((latest_version + 1))
-  new_tag=${IMAGE_NAME}:v${new_version}
+  new_tag=$(print_next_version)
   docker manifest create \
         $new_tag \
         "${new_tag}_x86_64" \
