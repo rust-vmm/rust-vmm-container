@@ -68,7 +68,7 @@ jobs:
           # This is needed so that a manifest is created, and we can have the same
           # docker container on both x86_64 and arm64.
           platforms: linux/amd64,linux/arm64
-          tags: ${{ env.VERSION }}
+          tags: ${{ env.VERSION }},${{ env.IMAGE_NAME }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -125,7 +125,7 @@ jobs:
           file: Dockerfile.riscv64
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64
-          tags: ${{ env.VERSION }}-riscv
+          tags: ${{ env.VERSION }}-riscv,${{ env.IMAGE_NAME }}:latest-riscv
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
