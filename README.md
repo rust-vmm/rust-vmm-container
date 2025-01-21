@@ -2,10 +2,15 @@
 
 **`rustvmm/dev`** is a container with all dependencies used for running
 `rust-vmm` integration and performance tests. The container is available on
-Docker Hub and has support for `x86_64` and `aarch64` platforms.
+Docker Hub and has support for `x86_64` `aarch64` and `riscv64` platforms.
 
-For the latest available tag, please check the `rustvmm/dev` builds available
-on [Docker Hub](https://hub.docker.com/r/rustvmm/dev/tags).
+The latest available tag is `latest` for `x86_64` and `aarch64` and
+`latest-riscv` for `riscv64`. If you want `git sha1` lables or previously used
+`vN` counter labels, please check the `rustvmm/dev` builds available on 
+[Docker Hub](https://hub.docker.com/r/rustvmm/dev/tags).
+
+Note: we used counter tagging `vN` for `rustvmm/dev` until `v49`, but now we
+switch to `git sha1` tagging. Details are recorded in #121.
 
 ## Know Issues
 
@@ -16,21 +21,25 @@ For now rust is installed only for the root user.
 The container is currently used for running the integration tests for the
 majority of rust-vmm crates.
 
-Example of running cargo build on the kvm-ioctls crate:
+Example of running cargo build on the kvm crate:
 
 ```bash
-> git clone git@github.com:rust-vmm/kvm-ioctls.git
-> cd kvm-ioctls/
-> docker run --volume $(pwd):/kvm-ioctls \
-         rustvmm/dev:$VERSION \
-         /bin/bash -c "cd /kvm-ioctls && cargo build --release"
+> git clone https://github.com/rust-vmm/kvm.git
+> cd kvm
+# latest for x86_64 and aarch64, latest-riscv for riscv64
+> docker run --volume $(pwd):/kvm \
+         rustvmm/dev:latest \
+         /bin/bash -c "cd /kvm && cargo build --release"
  Downloading crates ...
-  Downloaded libc v0.2.48
-  Downloaded kvm-bindings v0.1.1
-   Compiling libc v0.2.48
-   Compiling kvm-bindings v0.1.1
-   Compiling kvm-ioctls v0.0.1 (/kvm-ioctls)
-    Finished release [optimized] target(s) in 5.63s
+  Downloaded bitflags v1.3.2
+  Downloaded vmm-sys-util v0.12.1
+   Compiling libc v0.2.169
+   Compiling bitflags v1.3.2
+   Compiling kvm-ioctls v0.20.0 (/kvm/kvm-ioctls)
+   Compiling bitflags v2.8.0
+   Compiling vmm-sys-util v0.12.1
+   Compiling kvm-bindings v0.11.0 (/kvm/kvm-bindings)
+    Finished `release` profile [optimized] target(s) in 6.34s
 ```
 
 ## Testing Changes locally with the Container Image
@@ -44,19 +53,20 @@ To do this, first build the rust-vmm container locally by running the commands
 > ./docker.sh build
 ```
 
-since this command will build a new docker image with tag latest version + 1
-and will alias it with "latest" tag, when testing the container check the output
-of the `./docker.sh build` command and you will see the tag that will be published
-with your PR to be sure that the changes introduced by your PR to the CI works
-correctly before pusing it upstream.
-Example of this output is `Build completed for rustvmm/dev:v38_x86_64`
+This command will build a new docker image with tag g$(git show -s --format=%h),
+and alias it as latest. For local testing of changes to the container, you can
+thus either run rustvmm/dev:latest, or use the explicit tag output by
+`./docker.sh build`.
 
-Example of how to test the container on your localhost with tag v38_x86_64:
+Example of this output is `Build completed for rustvmm/dev:g0c21d2c_x86_64`
+
+Example of how to test the container on your localhost with tag
+`g0c21d2c_x86_64`:
 
 ```bash
 > docker run --device=/dev/kvm -it --rm \
 --volume $(pwd):/path/to/workdir --workdir /path/to/workdir \
---privileged rustvmm/dev:v38_x86_64
+--privileged rustvmm/dev:g0c21d2c_x86_64
 ```
 The `--workdir /workdir` option ensures that when the container starts,
 the working directory inside the container is set to `/workdir`
@@ -69,7 +79,7 @@ accessible in the `/workdir` directory inside the container.
 A new container version is published for each PR merged to main that adds
 changes to the [Dockerfile](Dockerfile) or the related scripts. Publishing the
 container happens automatically through the
-[.github/worflows](.github/workflows) and no manual intervention is required.
+[.github/workflows](.github/workflows) and no manual intervention is required.
 
 You can check the progress of a commit being published to Docker Hub by looking
 at the GitHub commit history, and clicking on the status check of the relevant
@@ -100,9 +110,9 @@ On an `aarch64` platform:
 You will need to redo all steps on an `x86_64` platform so the containers are
 kept in sync (same package versions on both `x86_64` and `aarch64`).
 
-Now that the tags `v4_x86_64` and `v4_aarch64` are pushed to Docker Hub, we can
-go ahead and also create a new version tag that points to these two builds
-using
+Now that the tags `g0c21d2c_x86_64` and `g0c21d2c_aarch64` are pushed to Docker
+Hub, we can go ahead and also create a new version tag that points to these two
+builds using
 [docker manifest](https://docs.docker.com/engine/reference/commandline/manifest/).
 
 ```bash
