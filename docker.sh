@@ -6,24 +6,12 @@ GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 IMAGE_NAME=rustvmm/dev
 REGISTRY=index.docker.io
 
-# Get the latest published version. Returns a number.
-# If latest is v100, returns 100.
-# If latest for riscv64 is v100-riscv, returns 100.
-# This works as long as we have less than 100 tags because we set the page size to 100,
-# once we have more than that this script needs to be updated.
-latest(){
-  curl -L -s 'https://registry.hub.docker.com/v2/repositories/rustvmm/dev/tags?page_size=100'| \
-    jq '."results"[]["name"]' |  sed 's/"//g' | cut -c 2- | grep -E "^[0-9]+" | sort -n | tail -1
-}
-
 next_version() {
-    latest_version=$(latest)
-    new_version=$((latest_version + 1))
-    echo "$new_version"
+    echo "$(git show -s --format=%h)"
 }
 
 print_next_version() {
-  echo "rustvmm/dev:v$(next_version)"
+  echo "${IMAGE_NAME}:g$(next_version)"
 }
 
 print_registry() {
@@ -37,14 +25,15 @@ print_image_name() {
 # Builds the tag for the newest versions. It needs the last published version number.
 # Returns a valid docker tag.
 build_tag(){
-  new_version=$(next_version)
-  new_tag=${IMAGE_NAME}:v${new_version}_$ARCH
+  if [ "$ARCH" == "riscv64" ]; then
+    new_tag=$(print_next_version)-riscv
+  else
+    new_tag=$(print_next_version)_$ARCH
+  fi
   echo "$new_tag"
 }
 
 # Build a new docker version.
-# It will build a new docker image with tag latest version + 1
-# and will alias it with "latest" tag.
 build(){
   new_tag=$(build_tag)
   docker build -t "$new_tag" \
@@ -57,9 +46,7 @@ build(){
 
 # Creates and pushes a manifest for a new version
 manifest(){
-  latest_version=$(latest)
-  new_version=$((latest_version + 1))
-  new_tag=${IMAGE_NAME}:v${new_version}
+  new_tag=$(print_next_version)
   docker manifest create \
         $new_tag \
         "${new_tag}_x86_64" \
