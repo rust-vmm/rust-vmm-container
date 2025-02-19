@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # Adding rust binaries to PATH.
 ENV PATH="$PATH:/root/.cargo/bin"

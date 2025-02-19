@@ -4,12 +4,6 @@ set -ex
 ARCH=$(uname -m)
 RUST_TOOLCHAIN="1.83.0"
 
-# See: https://stackoverflow.com/questions/78105004/docker-build-fails-because-unable-to-install-libc-bin
-if [ "$ARCH" == "aarch64" ]; then
-    rm /var/lib/dpkg/info/libc-bin.*
-    DEBIAN_FRONTEND="noninteractive" apt-get clean
-fi
-
 apt-get update
 
 # DEBIAN_FRONTEND is set for tzdata.
@@ -22,7 +16,7 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     build-essential libjsoncpp25 librhash0 make \
     autoconf autoconf-archive automake libtool \
     libclang-dev iproute2 \
-    libasound2 libasound2-dev \
+    libasound2t64 libasound2-dev \
     libepoxy0 libepoxy-dev \
     libdrm2 libdrm-dev \
     libgbm1 libgbm-dev libgles2 \
@@ -132,7 +126,7 @@ if [ "$ARCH" != "riscv64" ]; then
 fi
 
 # dbus-daemon expects this folder
-mkdir /run/dbus
+mkdir -p /run/dbus
 
 # `riscv64` specific, which setup the rootfs for `riscv64` VM to execute actual
 # RISC-V tests through prepared ssh server.
