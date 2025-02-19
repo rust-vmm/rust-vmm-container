@@ -4,12 +4,6 @@ set -ex
 ARCH=$(uname -m)
 RUST_TOOLCHAIN="1.83.0"
 
-# See: https://stackoverflow.com/questions/78105004/docker-build-fails-because-unable-to-install-libc-bin
-if [ "$ARCH" == "aarch64" ]; then
-    rm /var/lib/dpkg/info/libc-bin.*
-    DEBIAN_FRONTEND="noninteractive" apt-get clean
-fi
-
 apt-get update
 
 # DEBIAN_FRONTEND is set for tzdata.
