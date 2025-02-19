@@ -1,27 +1,27 @@
 # Compile QEMU 9.0.2
 # ---------------------------------------------------------
-FROM ubuntu:22.04 AS qemu_builder
+FROM ubuntu:24.04 AS qemu_builder
 
 COPY riscv64/build_qemu_system_riscv64.sh /opt/src/scripts/build.sh
 RUN /opt/src/scripts/build.sh
 
 # Compile kernel 6.10 since we need AIA drivers
 # ---------------------------------------------------------
-FROM ubuntu:22.04 AS kernel_builder
+FROM ubuntu:24.04 AS kernel_builder
 
 COPY riscv64/build_kernel.sh /opt/src/scripts/build.sh
 RUN /opt/src/scripts/build.sh
 
 # Compile OpenSBI
 # ---------------------------------------------------------
-FROM ubuntu:22.04 AS opensbi_builder
+FROM ubuntu:24.04 AS opensbi_builder
 
 COPY riscv64/build_opensbi.sh /opt/src/scripts/build.sh
 RUN /opt/src/scripts/build.sh
 
 # Build rootfs with sshd and Rust related packages ready
 # ---------------------------------------------------------
-FROM --platform=linux/riscv64 riscv64/ubuntu:22.04 AS rootfs_builder
+FROM --platform=linux/riscv64 riscv64/ubuntu:24.04 AS rootfs_builder
 
 ENV PATH="$PATH:/root/.cargo/bin"
 COPY build_container.sh /opt/src/scripts/build.sh
@@ -29,7 +29,7 @@ RUN /opt/src/scripts/build.sh
 
 # Finalize
 # ---------------------------------------------------------
-FROM ubuntu:22.04 AS final
+FROM ubuntu:24.04 AS final
 
 ARG OUTPUT=/output
 ARG QEMU_DIR=/opt/qemu
