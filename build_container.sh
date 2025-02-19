@@ -126,7 +126,7 @@ if [ "$ARCH" != "riscv64" ]; then
 fi
 
 # dbus-daemon expects this folder
-mkdir /run/dbus
+mkdir -p /run/dbus
 
 # `riscv64` specific, which setup the rootfs for `riscv64` VM to execute actual
 # RISC-V tests through prepared ssh server.
