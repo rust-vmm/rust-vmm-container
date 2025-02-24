@@ -13,7 +13,7 @@ echo 'tmpfs /tmp tmpfs rw,nosuid,nodev,size=524288k,nr_inodes=204800 0 0' >> $RO
 
 # Setup container ssh config
 yes "" | ssh-keygen -P ""
-cat /root/.ssh/id_rsa.pub > $ROOTFS_DIR/root/.ssh/authorized_keys
+cat /root/.ssh/*.pub > $ROOTFS_DIR/root/.ssh/authorized_keys
 cat > /root/.ssh/config << EOF
 Host riscv-qemu
     HostName localhost
