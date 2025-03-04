@@ -49,6 +49,8 @@ if [ "$ARCH" != "riscv64" ]; then
     popd
 fi
 
+# Allow pip to install packages system wide
+rm /usr/lib/python3.*/EXTERNALLY-MANAGED
 pip3 install --no-cache-dir pytest pexpect boto3 pytest-timeout && apt purge -y python3-pip
 
 # Install rustup and a fixed version of Rust.
