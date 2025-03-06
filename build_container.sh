@@ -86,9 +86,11 @@ cargo install cargo-llvm-cov
 # support riscv64 too, let's skip them for now.
 if [ "$ARCH" != "riscv64" ]; then
     pushd /opt
-    git clone https://android.googlesource.com/platform/hardware/google/aemu
+
+    # required by vhost-device-gpu
+    git clone --depth 1 --branch v0.1.2-aemu-release \
+        https://android.googlesource.com/platform/hardware/google/aemu
     pushd aemu
-    git checkout v0.1.2-aemu-release
     cmake -DAEMU_COMMON_GEN_PKGCONFIG=ON \
         -DAEMU_COMMON_BUILD_CONFIG=gfxstream \
         -DENABLE_VKCEREAL_TESTS=OFF -B build
@@ -96,18 +98,25 @@ if [ "$ARCH" != "riscv64" ]; then
     cmake --install build
     popd
     rm -rf aemu
-    git clone https://android.googlesource.com/platform/hardware/google/gfxstream
+
+    # required by vhost-device-gpu
+    git clone --depth 1 --branch v0.1.2-gfxstream-release \
+        https://android.googlesource.com/platform/hardware/google/gfxstream
     pushd gfxstream
-    git checkout v0.1.2-gfxstream-release
     meson setup host-build/
     meson install -C host-build/
     popd
     rm -rf gfxstream
-    git clone --depth 1 --branch v2.0 https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
+
+    # required by vhost-device-gpio
+    git clone --depth 1 --branch v2.0 \
+        https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/
     pushd libgpiod
     ./autogen.sh --prefix=/usr && make && make install
     popd
     rm -rf libgpiod
+
+    # we can leave /opt at this point
     popd
 
     # configure dynamic linker run-time bindings after installing new libraries
