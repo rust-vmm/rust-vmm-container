@@ -126,6 +126,9 @@ if [ "$ARCH" != "riscv64" ]; then
     popd
     rm -rf virglrenderer
     popd
+
+    # configure dynamic linker run-time bindings after installing new libraries
+    ldconfig
 fi
 
 # dbus-daemon expects this folder
