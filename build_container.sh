@@ -8,7 +8,7 @@ apt-get update
 
 # DEBIAN_FRONTEND is set for tzdata.
 DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
-    curl gcc musl-tools git python3 python3-pip shellcheck \
+    curl gcc musl-tools git python3 python3-pip shellcheck rsync \
     libssl-dev tzdata cmake g++ pkg-config jq libcurl4-openssl-dev libelf-dev \
     libdw-dev binutils-dev libiberty-dev make \
     cpio bc flex bison wget xz-utils fakeroot \
