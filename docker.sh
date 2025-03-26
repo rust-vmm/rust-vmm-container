@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 set -e
+source "$(dirname "$0")/docker.env"
 ARCH=$(uname -m)
-GIT_COMMIT=$(git rev-parse HEAD)
-GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-IMAGE_NAME=rustvmm/dev
-REGISTRY=index.docker.io
 
 next_version() {
     echo "$(git show -s --format=%h)"
