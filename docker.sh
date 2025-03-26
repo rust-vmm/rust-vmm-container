@@ -37,6 +37,7 @@ build(){
         --load \
         --build-arg GIT_BRANCH="${GIT_BRANCH}" \
         --build-arg GIT_COMMIT="${GIT_COMMIT}" \
+        --build-arg RUST_TOOLCHAIN="${RUST_TOOLCHAIN}" \
         -f Dockerfile .
   echo "Build completed for $new_tag"
 }
