@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+# Environment variables in common with the Docker.ps1 comes from the docker.env
 source "$(dirname "$0")/docker.env"
 ARCH=$(uname -m)
 
