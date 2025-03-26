@@ -42,6 +42,14 @@ Example of running cargo build on the kvm crate:
     Finished `release` profile [optimized] target(s) in 6.34s
 ```
 
+For Windows users (ensure Docker Desktop is in Linux containers mode):
+```powershell
+> git clone https://github.com/rust-vmm/kvm.git
+> cd kvm
+> docker run --volume "${PWD}:/kvm" `
+    rustvmm/dev:latest `
+    /bin/bash -c "cd /kvm && cargo build --release"
+```
 ## Testing Changes locally with the Container Image
 
 When we modify the container to install new dependencies, we may need to 
@@ -74,6 +82,28 @@ Since you've mounted the host's current directory ($(pwd)) to `/workdir` in
 the container, any files in the current working directory on the host will be
 accessible in the `/workdir` directory inside the container.
 
+For Windows (ensure Docker Desktop is in Linux containers mode):
+```powershell
+> cd rust-vmm-container
+> .\docker.ps1 build
+
+# Example output: Build completed for rustvmm/dev:gb607c2b_x86_64
+
+# Test the container using the tag from the build output
+> docker run -it --rm `
+    --volume "${PWD}:/path/to/workdir" `
+    --workdir /path/to/workdir `
+    rustvmm/dev:gb607c2b_x86_64
+```
+
+Note: Unlike Linux, Windows doesn't have direct access to KVM, so the `--device=/dev/kvm` and `--privileged` flags are not needed.
+
+Note: If you want to build a Windows container instead, you can switch Docker Desktop to "Windows containers" mode and run:
+```powershell
+> cd rust-vmm-container
+> .\docker.ps1 build   # This will automatically use Dockerfile.windows.x86_64
+```
+
 ## Publishing a New Version
 
 A new container version is published for each PR merged to main that adds
@@ -105,6 +135,18 @@ On an `aarch64` platform:
 > cd rust-vmm-dev-container
 > ./docker.sh build
 > ./docker.sh publish
+```
+
+On Windows (ensure Docker Desktop is in Linux containers mode):
+
+```powershell
+> cd rust-vmm-container
+> .\docker.ps1 build
+> .\docker.ps1 publish
+
+
+# To check if Docker is in Linux containers mode:
+> docker version --format '{{.Server.Os}}'  # Should output 'linux'
 ```
 
 You will need to redo all steps on an `x86_64` platform so the containers are
