@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 set -e
+# Environment variables in common with the Docker.ps1 comes from the docker.env
+source "$(dirname "$0")/docker.env"
 ARCH=$(uname -m)
-GIT_COMMIT=$(git rev-parse HEAD)
-GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-IMAGE_NAME=rustvmm/dev
-REGISTRY=index.docker.io
 
 next_version() {
     echo "$(git show -s --format=%h)"
@@ -40,6 +38,7 @@ build(){
         --load \
         --build-arg GIT_BRANCH="${GIT_BRANCH}" \
         --build-arg GIT_COMMIT="${GIT_COMMIT}" \
+        --build-arg RUST_TOOLCHAIN="${RUST_TOOLCHAIN}" \
         -f Dockerfile .
   echo "Build completed for $new_tag"
 }
