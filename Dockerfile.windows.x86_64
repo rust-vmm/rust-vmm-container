@@ -7,7 +7,6 @@ ARG RUST_TOOLCHAIN
 FROM mcr.microsoft.com/windows/servercore:$WIN_VER
 
 ENV chocolateyUseWindowsCompression "true"
-ENV RUST_TOOLCHAIN="1.46.0"
 
 ADD https://aka.ms/vs/16/release/vs_buildtools.exe C:\TEMP\vs_buildtools.exe
 ADD https://win.rustup.rs/x86_64 C:\TEMP\rustup-init.exe

@@ -2,7 +2,6 @@
 set -ex
 
 ARCH=$(uname -m)
-RUST_TOOLCHAIN="1.85.0"
 
 apt-get update
 

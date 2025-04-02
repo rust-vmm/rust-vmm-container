@@ -23,6 +23,8 @@ RUN /opt/src/scripts/build.sh
 # ---------------------------------------------------------
 FROM --platform=linux/riscv64 riscv64/ubuntu:24.04 AS rootfs_builder
 
+ARG RUST_TOOLCHAIN
+ENV RUST_TOOLCHAIN=${RUST_TOOLCHAIN}
 ENV PATH="$PATH:/root/.cargo/bin"
 COPY build_container.sh /opt/src/scripts/build.sh
 RUN /opt/src/scripts/build.sh
