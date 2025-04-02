@@ -61,6 +61,10 @@ jobs:
           echo "VERSION=${NEXT_VERSION}" >> $GITHUB_ENV
           echo "Next version to be published is: ${NEXT_VERSION}"
 
+          RUST_TOOLCHAIN=$(./docker.sh print-rust-toolchain)
+          echo "RUST_TOOLCHAIN=${RUST_TOOLCHAIN}" >> $GITHUB_ENV
+          echo "Rust toolchain used is: ${RUST_TOOLCHAIN}"
+
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@v6
@@ -72,6 +76,7 @@ jobs:
           # docker container on both x86_64 and arm64.
           platforms: linux/amd64,linux/arm64
           tags: ${{ env.VERSION }},${{ env.IMAGE_NAME }}:latest
+          build-args: RUST_TOOLCHAIN=${{ env.RUST_TOOLCHAIN }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -120,6 +125,10 @@ jobs:
           echo "VERSION=${NEXT_VERSION}" >> $GITHUB_ENV
           echo "Next version to be published is: ${NEXT_VERSION}"
 
+          RUST_TOOLCHAIN=$(./docker.sh print-rust-toolchain)
+          echo "RUST_TOOLCHAIN=${RUST_TOOLCHAIN}" >> $GITHUB_ENV
+          echo "Rust toolchain used is: ${RUST_TOOLCHAIN}"
+
       - name: Build and push Docker image for RISC-V
         id: build-and-push-riscv
         uses: docker/build-push-action@v6
@@ -129,6 +138,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64
           tags: ${{ env.VERSION }}-riscv,${{ env.IMAGE_NAME }}:latest-riscv
+          build-args: RUST_TOOLCHAIN=${{ env.RUST_TOOLCHAIN }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

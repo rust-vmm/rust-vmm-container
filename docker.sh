@@ -19,6 +19,10 @@ print_image_name() {
   echo ${IMAGE_NAME}
 }
 
+print_rust_toolchain() {
+  echo ${RUST_TOOLCHAIN}
+}
+
 # Builds the tag for the newest versions. It needs the last published version number.
 # Returns a valid docker tag.
 build_tag(){
@@ -37,6 +41,7 @@ build(){
         --load \
         --build-arg GIT_BRANCH="${GIT_BRANCH}" \
         --build-arg GIT_COMMIT="${GIT_COMMIT}" \
+        --build-arg RUST_TOOLCHAIN="${RUST_TOOLCHAIN}" \
         -f Dockerfile .
   echo "Build completed for $new_tag"
 }
@@ -78,6 +83,9 @@ case $1 in
     ;;
   "print-next-version")
     print_next_version;
+    ;;
+    "print-rust-toolchain")
+    print_rust_toolchain;
     ;;
   *)
    echo "Command $1 not supported. Try with 'publish', 'build', 'manifest' or 'print-next-version'. ";
