@@ -79,6 +79,18 @@ fi
 
 cargo install cargo-llvm-cov
 
+# Install the codecov.io uploader. Not available on riscv64, so skip there
+if [ "$ARCH" != "riscv64" ]; then
+    pushd /usr/local/bin
+    if [ "$ARCH" = "x86_64" ]; then
+        curl -O https://uploader.codecov.io/latest/linux/codecov
+    else
+        curl -O https://uploader.codecov.io/latest/aarch64/codecov
+    fi
+    chmod +x codecov
+    popd
+fi
+
 # Install some dependencies required by vhost-device crates but not available
 # in Ubuntu repos.
 # Some of these do not support riscv64, since vhost-device crates do not
