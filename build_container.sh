@@ -151,3 +151,9 @@ if [ "$ARCH" == "riscv64" ]; then
     # Setup network
     echo $'auto lo\niface lo inet loopback\n\nauto eth0\niface eth0 inet dhcp\n' > /etc/network/interfaces
 fi
+
+# Install kani in x86 and arm. Not available on riscv64, so skip there
+if [ "$ARCH" != "riscv64" ]; then
+    cargo install --locked kani-verifier
+    cargo kani setup
+fi
