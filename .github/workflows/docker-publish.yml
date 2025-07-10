@@ -12,12 +12,6 @@ on:
       - riscv64/*
   pull_request:
     branches: [ "main" ]
-    paths:
-      - Dockerfile
-      - .github/workflows/docker-publish.yml
-      - build_container.sh
-      - Dockerfile.riscv64
-      - riscv64/*
 
 jobs:
   build:
