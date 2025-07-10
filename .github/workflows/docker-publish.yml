@@ -4,12 +4,14 @@ on:
   workflow_dispatch:
   push:
     branches: [ "main" ]
-    paths:
-      - Dockerfile
-      - .github/workflows/docker-publish.yml
-      - build_container.sh
-      - Dockerfile.riscv64
-      - riscv64/*
+    paths-ignore:
+      - CODEOWNERS
+      - LICENSE
+      - README.md
+      - img/*
+        # We don't automatically build the windows image
+      - Dockerfile.windows.x86_64
+      - docker.ps1
   pull_request:
     branches: [ "main" ]
 
