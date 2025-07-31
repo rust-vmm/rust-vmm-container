@@ -77,6 +77,12 @@ if [ "$ARCH" != "riscv64" ]; then
     rustup target add $ARCH-unknown-linux-musl $ARCH-unknown-none
 fi
 
+# The below are only used for compile-testing via cargo check.
+# It suffices to do that on _one_ architecture.
+if [ "$ARCH" == "x86_64" ]; then
+    rustup target add aarch64-apple-darwin x86_64-pc-windows-gnu
+fi
+
 cargo install cargo-llvm-cov
 
 # Install the codecov.io uploader. Not available on riscv64, so skip there
