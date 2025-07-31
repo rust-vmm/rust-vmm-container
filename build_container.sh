@@ -22,7 +22,6 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     libglm-dev libstb-dev libc6-dev \
     debhelper-compat libdbus-1-dev libglib2.0-dev meson ninja-build dbus \
     libvirglrenderer1 libvirglrenderer-dev pipewire libpipewire-0.3-dev \
-    lsof \
     podman
 
 # `riscv64` specific dependencies
