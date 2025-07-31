@@ -22,7 +22,6 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     libglm-dev libstb-dev libc6-dev \
     debhelper-compat libdbus-1-dev libglib2.0-dev meson ninja-build dbus \
     libvirglrenderer1 libvirglrenderer-dev pipewire libpipewire-0.3-dev \
-    lsof \
     podman
 
 # `riscv64` specific dependencies
@@ -76,6 +75,12 @@ rustup component add llvm-tools-preview  # needed for coverage
 # Skip on `riscv64` for now
 if [ "$ARCH" != "riscv64" ]; then
     rustup target add $ARCH-unknown-linux-musl $ARCH-unknown-none
+fi
+
+# The below are only used for compile-testing via cargo check.
+# It suffices to do that on _one_ architecture.
+if [ "$ARCH" == "x86_64" ]; then
+    rustup target add aarch64-apple-darwin x86_64-pc-windows-gnu
 fi
 
 cargo install cargo-llvm-cov
