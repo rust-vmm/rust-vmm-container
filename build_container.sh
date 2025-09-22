@@ -22,7 +22,8 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     libglm-dev libstb-dev libc6-dev \
     debhelper-compat libdbus-1-dev libglib2.0-dev meson ninja-build dbus \
     libvirglrenderer1 libvirglrenderer-dev pipewire libpipewire-0.3-dev \
-    podman libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+    podman libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+    gstreamer1.0-plugins-base gstreamer1.0-plugins-good 
 
 # `riscv64` specific dependencies
 if [ "$ARCH" == "riscv64" ]; then
