@@ -98,6 +98,8 @@ if [ "$ARCH" != "riscv64" ]; then
     popd
 fi
 
+cargo install cargo-all-features
+
 # Install some dependencies required by vhost-device crates but not available
 # in Ubuntu repos.
 # Some of these do not support riscv64, since vhost-device crates do not
