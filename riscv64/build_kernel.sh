@@ -16,6 +16,8 @@ git clone --depth 1 --branch $KERNEL_TAG https://github.com/torvalds/linux.git
 pushd linux
 # Enable kvm module instead of inserting manually
 sed -i "s|^CONFIG_KVM=.*|CONFIG_KVM=y|g" arch/riscv/configs/defconfig
+# Enable legacy SBI calls and activate vcpu_sbi_ext_v01 for kvm.
+echo "CONFIG_RISCV_SBI_V01=y" >> arch/riscv/configs/defconfig
 make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- defconfig && \
 make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- -j$(nproc)
 mv arch/riscv/boot/Image $OUTPUT
