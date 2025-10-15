@@ -21,7 +21,7 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     libgbm1 libgbm-dev libgles2 \
     libglm-dev libstb-dev libc6-dev \
     debhelper-compat libdbus-1-dev libglib2.0-dev meson ninja-build dbus \
-    libvirglrenderer1 libvirglrenderer-dev pipewire libpipewire-0.3-dev \
+    python3-yaml pipewire libpipewire-0.3-dev \
     podman libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
     gstreamer1.0-plugins-base gstreamer1.0-plugins-good 
 
@@ -127,6 +127,16 @@ if [ "$ARCH" != "riscv64" ]; then
     meson install -C host-build/
     popd
     rm -rf gfxstream
+
+    # required by vhost-device-gpu
+    git clone --depth 1 --branch virglrenderer-1.2.0 \
+        https://gitlab.freedesktop.org/virgl/virglrenderer.git
+
+    pushd virglrenderer
+    meson build/
+    meson install -C build/
+    popd
+    rm -rf virglrenderer
 
     # required by vhost-device-gpio
     git clone --depth 1 --branch v2.0 \
