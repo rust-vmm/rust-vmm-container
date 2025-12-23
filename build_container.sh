@@ -63,8 +63,10 @@ curl https://sh.rustup.rs -sSf | sh -s -- \
 # Install cargo tools.
 # Use `git` executable to avoid OOM on arm64:
 # https://github.com/rust-lang/cargo/issues/10583#issuecomment-1129997984
+#
+# cargo-audit 0.22 is the first version that can parse cvss 4.0 scores
 cargo --config "net.git-fetch-with-cli = true" \
-    install critcmp cargo-audit cargo-fuzz
+    install critcmp "cargo-audit@>=0.22.0" cargo-fuzz
 rm -rf /root/.cargo/registry/
 
 # Install nightly (needed for fuzzing)
