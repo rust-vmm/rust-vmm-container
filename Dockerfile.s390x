@@ -1,0 +1,26 @@
+# Build rootfs with sshd and Rust related packages ready
+# ---------------------------------------------------------
+FROM --platform=linux/s390x s390x/ubuntu:24.04 AS rootfs_builder
+
+ARG RUST_TOOLCHAIN
+ENV RUST_TOOLCHAIN=${RUST_TOOLCHAIN}
+ENV PATH="$PATH:/root/.cargo/bin"
+COPY build_container.sh /opt/src/scripts/build.sh
+RUN /opt/src/scripts/build.sh
+
+# Finalize
+# ---------------------------------------------------------
+FROM ubuntu:24.04 AS final
+
+ARG ROOTFS_DIR=/opt/rootfs
+
+COPY --from=rootfs_builder / $ROOTFS_DIR
+
+COPY s390x/build_finalize.sh /opt/src/scripts/finalize.sh
+RUN /opt/src/scripts/finalize.sh
+
+ENV ROOTFS_DIR=$ROOTFS_DIR WORKDIR=/workdir
+
+# Start qemu-system-s390x as a background process
+COPY s390x/start_in_qemu.sh /opt/src/scripts/start.sh
+ENTRYPOINT ["/opt/src/scripts/start.sh"]
