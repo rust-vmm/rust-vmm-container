@@ -85,9 +85,20 @@ jobs:
           subject-digest: ${{ steps.build-and-push.outputs.digest }}
           push-to-registry: true
 
-  build-riscv:
-
+  build-alt-arch:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - arch: riscv
+            dockerfile: Dockerfile.riscv64
+            tag_suffix: riscv
+            push_attestation: true
+          - arch: s390x
+            dockerfile: Dockerfile.s390x
+            tag_suffix: s390x
+            push_attestation: false
+
     permissions:
       packages: write
       contents: read
@@ -112,29 +123,25 @@ jobs:
         run: |
           REGISTRY=$(./docker.sh print-registry)
           echo "REGISTRY=${REGISTRY}" >> $GITHUB_ENV
-          echo "Registry to be published is: ${REGISTRY}"
 
           IMAGE_NAME=$(./docker.sh print-image-name)
           echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
-          echo "Image name to be published is: ${IMAGE_NAME}"
 
           NEXT_VERSION=$(./docker.sh print-next-version)
           echo "VERSION=${NEXT_VERSION}" >> $GITHUB_ENV
-          echo "Next version to be published is: ${NEXT_VERSION}"
 
           RUST_TOOLCHAIN=$(./docker.sh print-rust-toolchain)
           echo "RUST_TOOLCHAIN=${RUST_TOOLCHAIN}" >> $GITHUB_ENV
-          echo "Rust toolchain used is: ${RUST_TOOLCHAIN}"
 
-      - name: Build and push Docker image for RISC-V
-        id: build-and-push-riscv
+      - name: Build and push Docker image for ${{ matrix.arch }}
+        id: build-and-push
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: Dockerfile.riscv64
+          file: ${{ matrix.dockerfile }}
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64
-          tags: ${{ env.VERSION }}-riscv,${{ env.IMAGE_NAME }}:latest-riscv
+          tags: ${{ env.VERSION }}-${{ matrix.tag_suffix }},${{ env.IMAGE_NAME }}:latest-${{ matrix.tag_suffix }}
           build-args: RUST_TOOLCHAIN=${{ env.RUST_TOOLCHAIN }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -144,67 +151,5 @@ jobs:
         uses: actions/attest-build-provenance@v1
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          subject-digest: ${{ steps.build-and-push-riscv.outputs.digest }}
-          push-to-registry: true
-
-  build-s390x:
-
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
-      attestations: write
-      id-token: write
-
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to Docker Hub
-        if: ${{ github.event_name != 'pull_request' }}
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_ACCOUNT_ID }}
-          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
-
-      - name: Generate metadata for Docker
-        run: |
-          REGISTRY=$(./docker.sh print-registry)
-          echo "REGISTRY=${REGISTRY}" >> $GITHUB_ENV
-          echo "Registry to be published is: ${REGISTRY}"
-
-          IMAGE_NAME=$(./docker.sh print-image-name)
-          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
-          echo "Image name to be published is: ${IMAGE_NAME}"
-
-          NEXT_VERSION=$(./docker.sh print-next-version)
-          echo "VERSION=${NEXT_VERSION}" >> $GITHUB_ENV
-          echo "Next version to be published is: ${NEXT_VERSION}"
-
-          RUST_TOOLCHAIN=$(./docker.sh print-rust-toolchain)
-          echo "RUST_TOOLCHAIN=${RUST_TOOLCHAIN}" >> $GITHUB_ENV
-          echo "Rust toolchain used is: ${RUST_TOOLCHAIN}"
-
-      - name: Build and push Docker image for s390x
-        id: build-and-push-s390x
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: Dockerfile.s390x
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/amd64
-          tags: ${{ env.VERSION }}-s390x,${{ env.IMAGE_NAME }}:latest-s390x
-          build-args: RUST_TOOLCHAIN=${{ env.RUST_TOOLCHAIN }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Generate artifact attestation
-        if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          subject-digest: ${{ steps.build-and-push-s390x.outputs.digest }}
-          push-to-registry: false
+          subject-digest: ${{ steps.build-and-push.outputs.digest }}
+          push-to-registry: ${{ matrix.push_attestation }}
