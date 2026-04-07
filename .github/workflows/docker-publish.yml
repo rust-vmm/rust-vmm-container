@@ -85,9 +85,18 @@ jobs:
           subject-digest: ${{ steps.build-and-push.outputs.digest }}
           push-to-registry: true
 
-  build-riscv:
-
+  build-alt-arch:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - arch: riscv
+            dockerfile: Dockerfile.riscv64
+            tag_suffix: riscv
+          - arch: s390x
+            dockerfile: Dockerfile.s390x
+            tag_suffix: s390x
+
     permissions:
       packages: write
       contents: read
@@ -126,15 +135,15 @@ jobs:
           echo "RUST_TOOLCHAIN=${RUST_TOOLCHAIN}" >> $GITHUB_ENV
           echo "Rust toolchain used is: ${RUST_TOOLCHAIN}"
 
-      - name: Build and push Docker image for RISC-V
-        id: build-and-push-riscv
+      - name: Build and push Docker image for ${{ matrix.arch }}
+        id: build-and-push
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: Dockerfile.riscv64
+          file: ${{ matrix.dockerfile }}
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64
-          tags: ${{ env.VERSION }}-riscv,${{ env.IMAGE_NAME }}:latest-riscv
+          tags: ${{ env.VERSION }}-${{ matrix.tag_suffix }},${{ env.IMAGE_NAME }}:latest-${{ matrix.tag_suffix }}
           build-args: RUST_TOOLCHAIN=${{ env.RUST_TOOLCHAIN }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -144,5 +153,5 @@ jobs:
         uses: actions/attest-build-provenance@v1
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          subject-digest: ${{ steps.build-and-push-riscv.outputs.digest }}
+          subject-digest: ${{ steps.build-and-push.outputs.digest }}
           push-to-registry: true
