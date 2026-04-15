@@ -15,7 +15,9 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     build-essential libjsoncpp25 librhash0 make \
     autoconf autoconf-archive automake libtool \
     libclang-dev iproute2 \
+    linux-libc-dev \
     libasound2t64 libasound2-dev \
+    libavcodec-dev libavutil-dev \
     libepoxy0 libepoxy-dev \
     libdrm2 libdrm-dev \
     libgbm1 libgbm-dev libgles2 \
