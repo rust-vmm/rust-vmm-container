@@ -27,14 +27,22 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     podman libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
     gstreamer1.0-plugins-base gstreamer1.0-plugins-good 
 
-# `riscv64` specific dependencies
-if [ "$ARCH" == "riscv64" ]; then
+# `riscv64` and `s390x` specific dependencies
+if [ "$ARCH" == "riscv64" ] || [ "$ARCH" == "s390x" ]; then
     DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
         openssh-server systemd init ifupdown busybox udev isc-dhcp-client
 fi
 
-# apt dependencies not available on `riscv64`
-if [ "$ARCH" != "riscv64" ]; then
+# `s390x` specific dependencies
+if [ "$ARCH" == "s390x" ]; then
+    DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
+        linux-image-generic initramfs-tools
+    echo -e '9p\n9pnet\n9pnet_virtio' >> /etc/initramfs-tools/modules
+    update-initramfs -c -k all
+fi
+
+# apt dependencies not available on `riscv64` and `s390x`
+if [ "$ARCH" != "riscv64" ] && [ "$ARCH" != "s390x" ]; then
     DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
         binutils-aarch64-linux-gnu
 fi
@@ -43,8 +51,8 @@ fi
 apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # help musl-gcc find linux headers
-# Skip on `riscv64` for now
-if [ "$ARCH" != "riscv64" ]; then
+# Skip on `riscv64` and `s390x` for now
+if [ "$ARCH" != "riscv64" ] && [ "$ARCH" != "s390x" ]; then
     pushd /usr/include/$ARCH-linux-musl 
     ln -s ../$ARCH-linux-gnu/asm asm 
     ln -s ../linux linux 
@@ -78,7 +86,7 @@ rustup component add llvm-tools-preview  # needed for coverage
 
 # Install other rust targets.
 # Skip on `riscv64` for now
-if [ "$ARCH" != "riscv64" ]; then
+if [ "$ARCH" != "riscv64" ] && [ "$ARCH" != "s390x" ]; then
     rustup target add $ARCH-unknown-linux-musl $ARCH-unknown-none
 fi
 
@@ -90,8 +98,8 @@ fi
 
 cargo install cargo-llvm-cov
 
-# Install the codecov.io uploader. Not available on riscv64, so skip there
-if [ "$ARCH" != "riscv64" ]; then
+# Install the codecov.io uploader. Not available on riscv64 and s390x, so skip there
+if [ "$ARCH" != "riscv64" ] && [ "$ARCH" != "s390x" ]; then
     pushd /usr/local/bin
     if [ "$ARCH" = "x86_64" ]; then
         curl -O https://uploader.codecov.io/latest/linux/codecov
@@ -106,9 +114,9 @@ cargo install cargo-all-features
 
 # Install some dependencies required by vhost-device crates but not available
 # in Ubuntu repos.
-# Some of these do not support riscv64, since vhost-device crates do not
+# Some of these do not support riscv64 or s390x, since vhost-device crates do not
 # support riscv64 too, let's skip them for now.
-if [ "$ARCH" != "riscv64" ]; then
+if [ "$ARCH" != "riscv64" ] && [ "$ARCH" != "s390x" ]; then
     pushd /opt
 
     # required by vhost-device-gpu
@@ -160,9 +168,9 @@ fi
 # dbus-daemon expects this folder
 mkdir -p /run/dbus
 
-# `riscv64` specific, which setup the rootfs for `riscv64` VM to execute actual
-# RISC-V tests through prepared ssh server.
-if [ "$ARCH" == "riscv64" ]; then
+# QEMU specific, which setup the rootfs for `riscv64` and `s390x` VM to execute actual
+# target ARCH tests through prepared ssh server.
+if [ "$ARCH" == "riscv64" ] ||  [ "$ARCH" == "s390x" ] ; then
     # Set passwd for debugging
     echo 'root:rustvmm' | chpasswd
     # Allow root login
@@ -172,11 +180,11 @@ if [ "$ARCH" == "riscv64" ]; then
     systemctl enable ssh
     mkdir -p /root/.ssh
     # Setup network
-    echo $'auto lo\niface lo inet loopback\n\nauto eth0\niface eth0 inet dhcp\n' > /etc/network/interfaces
+    echo $'auto lo\niface lo inet loopback\n\nauto eth0\niface eth0 inet dhcp\n\nauto enc1\niface enc1 inet dhcp\n' > /etc/network/interfaces
 fi
 
-# Install kani in x86 and arm. Not available on riscv64, so skip there
-if [ "$ARCH" != "riscv64" ]; then
+# Install kani in x86 and arm. Not available on riscv64 and s390x, so skip there
+if [ "$ARCH" != "riscv64" ] &&  [ "$ARCH" != "s390x" ] ; then
     cargo install --locked kani-verifier
     cargo kani setup
 fi
