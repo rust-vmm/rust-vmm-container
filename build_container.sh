@@ -17,7 +17,7 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     libclang-dev iproute2 \
     linux-libc-dev \
     libasound2t64 libasound2-dev \
-    libavcodec-dev libavutil-dev \
+    libavcodec-dev libavutil-dev libswscale-dev \
     libepoxy0 libepoxy-dev \
     libdrm2 libdrm-dev \
     libgbm1 libgbm-dev libgles2 \
@@ -25,7 +25,7 @@ DEBIAN_FRONTEND="noninteractive" apt-get install --no-install-recommends -y \
     debhelper-compat libdbus-1-dev libglib2.0-dev meson ninja-build dbus \
     python3-yaml pipewire libpipewire-0.3-dev \
     podman libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
-    gstreamer1.0-plugins-base gstreamer1.0-plugins-good 
+    gstreamer1.0-plugins-base gstreamer1.0-plugins-good
 
 # `riscv64` specific dependencies
 if [ "$ARCH" == "riscv64" ]; then
