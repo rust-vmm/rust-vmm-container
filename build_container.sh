@@ -133,7 +133,7 @@ if [ "$ARCH" != "riscv64" ]; then
     rm -rf gfxstream
 
     # required by vhost-device-gpu
-    git clone --depth 1 --branch virglrenderer-1.2.0 \
+    git clone --depth 1 --branch virglrenderer-1.3.0 \
         https://gitlab.freedesktop.org/virgl/virglrenderer.git
 
     pushd virglrenderer
